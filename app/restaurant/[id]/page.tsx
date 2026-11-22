@@ -205,6 +205,13 @@ export default function RestaurantPage({
           Submit a Field Review
         </Link>
       </section>
+
+      {/* Footer attribution */}
+      <footer className="pt-4 pb-2 text-center border-t border-[#EFEFEA]">
+        <p className="text-xs text-[#8C8B85] font-mono tracking-widest uppercase">
+          The Outpost · Made by AN
+        </p>
+      </footer>
     </main>
   );
 }
