@@ -1,19 +1,25 @@
 # THE OUTPOST
 ### *Decentralized Field Intelligence & Travel Review Platform for Digital Nomads*
 
-**Live Deployment:** [https://the-outpost-blush.vercel.app](https://the-outpost-blush.vercel.app)  
-**Author:** Aditya (Made by AN)  
-**Stack:** Next.js 15 (App Router, TypeScript), Tailwind CSS, Neon Serverless PostgreSQL (`@neondatabase/serverless`), Raw SQL, Vercel
+[![Live Deployment](https://img.shields.io/badge/Live_Deployment-Vercel-black?style=for-the-badge&logo=vercel)](https://the-outpost-blush.vercel.app)
+[![Next.js](https://img.shields.io/badge/Next.js_15-App_Router-000000?style=for-the-badge&logo=nextdotjs)](https://nextjs.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-Strict-3178C6?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org)
+[![Neon Postgres](https://img.shields.io/badge/Neon-Serverless_PostgreSQL-00E599?style=for-the-badge&logo=postgresql)](https://neon.tech)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-Warm_Editorial-38B2AC?style=for-the-badge&logo=tailwindcss)](https://tailwindcss.com)
+
+> **Live Production URL:** [https://the-outpost-blush.vercel.app](https://the-outpost-blush.vercel.app)  
+> **Author:** Made by AN  
+> **Stack:** Next.js 15, React 19, TypeScript, Tailwind CSS, Neon Serverless PostgreSQL (`@neondatabase/serverless`), Raw SQL, Vercel  
 
 ---
 
 ## 🧭 What is The Outpost?
 
-**The Outpost** is a distraction-free, telemetry-driven travel review network built for wandering engineers, founders, and digital nomads. 
+**The Outpost** is a distraction-free, telemetry-driven travel review network engineered specifically for wandering software developers, founders, and digital nomads.
 
-Unlike generic travel blogs or cluttered tourism apps, The Outpost treats global destinations as field stations. It provides uncensored, high-signal intelligence on real working conditions across major territories:
-* **Verified Connectivity:** Real speedtest metrics (e.g., 850 Mbps optical fiber in Shibuya vs. 250 Mbps beach mesh in Goa).
-* **Cost of Existence:** Realistic monthly burn rates for remote builders ($750/mo to $2,300/mo).
+Unlike generic travel blogs or cluttered tourism apps, The Outpost treats global destinations as field stations. It provides high-signal intelligence on actual remote working conditions:
+* **Verified Connectivity:** Real speedtest metrics (e.g., 650 Mbps optical fiber in Chiang Mai vs. 920 Mbps fiber in Tokyo).
+* **Cost of Existence:** Realistic monthly burn rates for remote builders ($650/mo to $2,200/mo).
 * **Field Dispatches:** Unfiltered reviews from fellow nomads evaluating noise floors, focus cafes, community density, and safety.
 * **Dynamic Intelligence:** Station ratings and metrics computed dynamically on the fly using raw SQL queries directly against our PostgreSQL database.
 
@@ -22,24 +28,24 @@ Unlike generic travel blogs or cluttered tourism apps, The Outpost treats global
 ## 🎯 For Whom and Why I Made It
 
 ### Who It's For:
-* **Remote Software Engineers & Builders:** Nomads who need reliable gigabit wifi, acoustic quiet for marathon focus sessions, and dependable sockets.
-* **Digital Nomads & Solo Founders:** Creators moving between tech hubs across East Asia, South Asia, Europe, and Latin America.
-* **Modern Wanderers:** Travelers who value minimalist, high-contrast, eye-pleasing design with zero visual noise.
+* **Remote Software Engineers & Tech Founders:** Nomads who need reliable gigabit wifi, acoustic quiet for marathon focus sessions, and dependable sockets.
+* **Global Nomads & Creators:** Builders moving between global nomad hubs across Southeast Asia, East Asia, and Southern Europe.
+* **Aesthetic Minimalists:** Travelers who appreciate calm, low-strain, warm editorial design with zero visual noise.
 
-### Why I Made It (The Buildours Origin & Personalization):
-This project originated from a hands-on architectural challenge in the **Buildours** cohort. The original brief was centered around building a small consumer food prototype called **"Zomato Lite"** (a two-screen app with a burrito restaurant and a star review form) to teach how software really fits together across 5 architectural layers.
+### Why I Made It (The Buildhour Origin & Personalization):
+This project originated from a hands-on software architecture challenge in the **Buildhour** cohort. The original exercise was centered around building a small consumer food prototype called **"Zomato Lite"** (a two-screen app with a restaurant menu and a star review form) designed to teach how software fits together across 5 architectural layers.
 
-While the original exercise was educational, building another cookie-cutter restaurant clone with generic food menus did not resonate with my real-world goals. As a digital nomad inspired by exploration, focus culture, and the gritty scout ethos of *Attack on Titan* and *Berserk*, I decided to completely pivot and elevate the project:
+While the original exercise was educational, building another generic restaurant clone with food menus did not resonate with my real-world passions or career goals. As a digital nomad inspired by exploration, focus culture, and the gritty scout ethos, I decided to completely personalize and elevate the project:
 
-1. **From Burritos to Global Nomad Hubs:** Transformed food items into global cities and tech stations across Japan (Tokyo, Kyoto), China (Chongqing, Shanghai), India (Delhi, Goa), Germany (Frankfurt, Hamburg), and Spain (Barcelona).
-2. **From Generic Red App to Soothing Warm Editorial Design:** Discarded cheap red gradients and harsh dark modes in favor of an eye-pleasing, low-strain linen/cream aesthetic (`#F6F5F0`) paired with deep charcoal typography (`#1C1E21`) and subtle sand cards.
-3. **From a Toy to a Portfolio System:** Retained 100% of the rigorous full-stack software principles taught in the buildathon, but packaged it into an authentic, production-grade product that stands out in any engineering portfolio.
+1. **From Burritos to Global Nomad Hubs:** Transformed food items into global cities and tech stations across Thailand (Chiang Mai, Bangkok, Koh Phangan), Indonesia (Bali Canggu, Ubud, Lombok), Japan (Tokyo, Kyoto, Fukuoka), Spain (Barcelona, Valencia, Madrid), and India (Goa, Dharamsala, Bangalore).
+2. **From Generic Red App to Soothing Warm Editorial Design:** Discarded cheap red gradients and harsh dark modes in favor of an eye-pleasing, low-strain linen/cream aesthetic (`#F6F5F0`) paired with deep obsidian charcoal typography (`#0F1012`) and subtle warm borders (`#DDD9CE`).
+3. **From a Prototype to a Portfolio System:** Retained 100% of the foundational full-stack software principles taught in the buildathon, but packaged it into an authentic, production-grade product that stands out in any engineering portfolio.
 
 ---
 
-## 🏛️ The Core Engineering Principles
+## 🏛️ The Three Architectural Tenets
 
-Under the hood, **The Outpost** enforces three foundational engineering rules:
+Under the hood, **The Outpost** strictly enforces three foundational engineering rules:
 
 ### 1. Store Facts, Compute Answers
 * In the database, there is **zero `average_rating` column** and **zero `latest_review` column**.
@@ -67,77 +73,108 @@ Under the hood, **The Outpost** enforces three foundational engineering rules:
 
 ---
 
-## 🗺️ Territory & Station Network
+## 🗺️ Territory & Station Network (15 Hubs)
 
-The Outpost currently tracks verified field telemetry across 5 global territories:
+The Outpost currently tracks verified field telemetry across 5 global territories with at least 3 nomad-friendly hubs each:
 
-| Territory | City Station | Area / Hub | Verified Wifi | Living Est. |
-| :--- | :--- | :--- | :--- | :--- |
-| 🇯🇵 **Japan** | **Tokyo** | Shibuya & Daikanyama | 850 Mbps | $2,200/mo |
-| 🇯🇵 **Japan** | **Kyoto** | Gion & Kamogawa | 500 Mbps | $1,650/mo |
-| 🇨🇳 **China** | **Chongqing** | Yuzhong Peninsula | 650 Mbps | $950/mo |
-| 🇨🇳 **China** | **Shanghai** | Jing'an & French Concession | 750 Mbps | $1,850/mo |
-| 🇮🇳 **India** | **Delhi** | Hauz Khas & Lodhi | 350 Mbps | $750/mo |
-| 🇮🇳 **India** | **Goa** | Arambol & Anjuna | 250 Mbps | $850/mo |
-| 🇩🇪 **Germany** | **Frankfurt** | Innenstadt (DE-CIX) | 600 Mbps | $2,300/mo |
-| 🇩🇪 **Germany** | **Hamburg** | Speicherstadt & Schanze | 520 Mbps | $1,950/mo |
-| 🇪🇸 **Spain** | **Barcelona** | El Poblenou (22@) | 550 Mbps | $1,800/mo |
-
----
-
-## 🛠️ The 5-Layer System Architecture
-
-| File | Layer | Plain English Role |
-| :--- | :--- | :--- |
-| `components/NomadTravelApp.tsx` | **Frontend** | Main interactive app: territory switcher, city station profiles, and field dispatch feed. |
-| `app/page.tsx` | **Frontend** | Clean root entrypoint hosting the nomad network application. |
-| `app/restaurant/[id]/page.tsx` | **Frontend** | Direct route handler supporting deep links to specific station IDs. |
-| `app/review/[restaurantId]/page.tsx`| **Frontend** | Standalone review submission screen with 1–5 star picker and validation. |
-| `app/layout.tsx` & `globals.css` | **Frontend** | Enforces the eye-pleasing warm linen background (`#F6F5F0`) and custom typography. |
-| `app/api/cities/route.ts` | **Backend** | Computes and returns all global destinations with dynamic averages. |
-| `app/api/cities/[id]/route.ts` | **Backend** | Returns station telemetry, latest dispatch, and past reviews for a specific hub. |
-| `app/api/reviews/route.ts` | **Backend** | Validates payloads and executes raw SQL inserts for new reviews. |
-| `lib/db.ts` | **Backend** | Initializes the serverless PostgreSQL connection to Neon. |
-| `db/schema.sql` | **Database** | Raw DDL table definitions (`cities`, `reviews`) and foreign key constraints. |
-| `db/setup.mjs` | **Database** | Node migration script that provisions tables and seeds initial telemetry. |
-| `.env.local` & `.gitignore` | **Config** | Protects the production database connection string from ever entering Git. |
-| **GitHub + Vercel** | **Deployment** | CI/CD pipeline building production Next.js bundles and deploying to global edge nodes. |
+| Region | Station Hub | Nomad District | Verified Wifi | Living Est. | Key Specialty |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| 🇹🇭 **Thailand** | **Chiang Mai** | Nimman & Santitham | 650 Mbps | $850/mo | Global nomad epicenter, artisan cafes, mountain air |
+| 🇹🇭 **Thailand** | **Bangkok** | Thong Lo & Ekkamai | 800 Mbps | $1,450/mo | Skyscraper coworking lounges, 24/7 transit |
+| 🇹🇭 **Thailand** | **Koh Phangan** | Sri Thanu & Hin Kong | 300 Mbps | $1,150/mo | Beachside wooden shacks, wellness, crypto retreats |
+| 🇮🇩 **Indonesia** | **Bali (Canggu)** | Batu Bolong & Pererenan | 250 Mbps | $1,350/mo | Bamboo coworking campuses, surf breaks, nomad meetups |
+| 🇮🇩 **Indonesia** | **Bali (Ubud)** | Penestanan & Campuhan | 200 Mbps | $1,100/mo | Jungle river valleys, quiet deep-work sanctuaries |
+| 🇮🇩 **Indonesia** | **Lombok** | Kuta Lombok | 180 Mbps | $950/mo | Uncrowded reef bays, pristine nature, frontier builders |
+| 🇯🇵 **Japan** | **Tokyo** | Shibuya & Daikanyama | 920 Mbps | $2,200/mo | Gigabit fiber, acoustic focus pods, pristine safety |
+| 🇯🇵 **Japan** | **Kyoto** | Gion & Kamogawa | 500 Mbps | $1,650/mo | Historic machiya workhouses, zen temple gardens |
+| 🇯🇵 **Japan** | **Fukuoka** | Tenjin & Daimyo | 750 Mbps | $1,400/mo | National startup visa hub, compact ocean living |
+| 🇪🇸 **Spain** | **Barcelona** | El Poblenou & Gràcia | 600 Mbps | $1,850/mo | 300 days of sun, 22@ innovation district, beach cycling |
+| 🇪🇸 **Spain** | **Valencia** | Ruzafa & El Carmen | 500 Mbps | $1,350/mo | Turia green corridor, sunny plazas, low burn rate |
+| 🇪🇸 **Spain** | **Madrid** | Malasaña & La Latina | 550 Mbps | $1,650/mo | Historic libraries, endless tapas plazas, cultural pulse |
+| 🇮🇳 **India** | **Goa** | Arambol & Anjuna | 250 Mbps | $850/mo | Coastal sunsets, beach co-working, vibrant builder mesh |
+| 🇮🇳 **India** | **Dharamsala** | Dharamkot & McLeod Ganj | 220 Mbps | $650/mo | Himalayan pine air, monastery bells, mountain work decks |
+| 🇮🇳 **India** | **Bangalore** | Indiranagar & Koramangala | 500 Mbps | $950/mo | India's Silicon Valley, 24/7 coffee shops, founder density |
 
 ---
 
-## 🚀 Running Locally
+## 🗄️ Database Architecture
 
-### 1. Clone the repository
+The application runs on Neon Serverless PostgreSQL with normalized tables:
+
+```sql
+-- Global Nomad Stations
+CREATE TABLE cities (
+  id SERIAL PRIMARY KEY,
+  country TEXT NOT NULL,
+  city TEXT NOT NULL,
+  area TEXT NOT NULL,
+  wifi_speed TEXT NOT NULL,
+  monthly_cost TEXT NOT NULL,
+  tagline TEXT NOT NULL,
+  description TEXT NOT NULL
+);
+
+-- Field Dispatches & Intel
+CREATE TABLE reviews (
+  id SERIAL PRIMARY KEY,
+  city_id INTEGER NOT NULL REFERENCES cities(id) ON DELETE CASCADE,
+  nomad_callsign TEXT NOT NULL DEFAULT 'Anonymous Nomad',
+  rating INTEGER NOT NULL CHECK (rating BETWEEN 1 AND 5),
+  comment TEXT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+```
+
+---
+
+## 🎨 Visual Design Philosophy
+
+* **Warm Editorial Canvas (`#F6F5F0`):** Soft linen tone designed to reduce retinal strain during extended screen sessions.
+* **Zero Pitch Black / Zero Harsh Dark Mode:** Replaced aggressive `#000000` with deep obsidian charcoal (`#0F1012`) and slate gray accents (`#454950`).
+* **Subtle Sand Borders (`#DDD9CE`):** Soft, understated framing with gentle paper shadows.
+* **Warm Amber Stars (`#B46200`):** Warm honey gold ratings for field dispatches.
+* **Typography:** Clean, technical monospaced styling (`font-mono`) evoking field radios, radar equipment, and tactical dispatches.
+
+---
+
+## 🚀 Local Development Setup
+
+### 1. Clone & Install
 ```bash
 git clone https://github.com/Eternal9294f/TheOutpost.git
 cd TheOutpost
-```
-
-### 2. Install dependencies
-```bash
 npm install
 ```
 
-### 3. Configure environment variables
-Create a `.env.local` file in the project root:
+### 2. Configure Environment Variables
+Create `.env.local` in the project root:
 ```env
-DATABASE_URL=postgresql://user:password@your-neon-host.neon.tech/neondb?sslmode=require
+DATABASE_URL="postgresql://user:password@ep-host.region.aws.neon.tech/neondb?sslmode=require"
 ```
 
-### 4. Initialize and seed the database
+### 3. Initialize & Seed Database
 ```bash
 npm run db:setup
 ```
 
-### 5. Start the local server
+### 4. Run Development Server
 ```bash
 npm run dev
 ```
-Open **[http://localhost:3000](http://localhost:3000)** in your browser.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
-## 🛡️ License & Attribution
+## 📡 API Reference
 
-Designed and developed by **Aditya (AN)** as part of the **Buildours** buildathon challenge.  
-Released under the MIT License.
+* `GET /api/cities` — Returns all destinations with dynamic raw SQL `AVG(rating)` and `COUNT(*)`.
+* `GET /api/cities/:id` — Returns station telemetry, latest dispatch, and complete dispatch history.
+* `POST /api/reviews` — Validates rating (1–5) and comment, inserts review row into Neon Postgres.
+* `GET /api/restaurants/:id` — Compatibility endpoint aliased to destination data.
+
+---
+
+## 📜 License & Credits
+
+Built with pride by **AN** for digital nomads and wanderers worldwide.  
+Inspired by the **Buildhour** software architecture challenge.
