@@ -72,10 +72,10 @@ export async function GET(
       : null;
 
     // Helper to format review object
-    const formatReview = (r: { id: number; rating: number; comment: string; created_at: string | Date }) => ({
-      id: r.id,
-      rating: r.rating,
-      comment: r.comment,
+    const formatReview = (r: Record<string, any>) => ({
+      id: Number(r.id),
+      rating: Number(r.rating),
+      comment: String(r.comment),
       createdAt: r.created_at instanceof Date ? r.created_at.toISOString() : String(r.created_at),
     });
 
