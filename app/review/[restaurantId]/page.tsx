@@ -1,14 +1,8 @@
 "use client";
 
 import { useState, useEffect, use } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
-
-interface MenuItem {
-  id: number;
-  name: string;
-  category: string;
-}
 
 export default function ReviewPage({
   params,
@@ -17,12 +11,8 @@ export default function ReviewPage({
 }) {
   const { restaurantId } = use(params);
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const preselectedItemId = searchParams.get("itemId");
 
-  const [restaurantName, setRestaurantName] = useState<string>("");
-  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
-  const [selectedItemId, setSelectedItemId] = useState<string>(preselectedItemId || "");
+  const [cityName, setCityName] = useState<string>("");
   const [callsign, setCallsign] = useState("");
   const [rating, setRating] = useState<number | null>(null);
   const [hoveredRating, setHoveredRating] = useState<number | null>(null);
@@ -33,16 +23,15 @@ export default function ReviewPage({
   useEffect(() => {
     async function loadData() {
       try {
-        const res = await fetch(`/api/restaurants/${restaurantId}`);
+        const res = await fetch(`/api/cities/${restaurantId}`);
         if (res.ok) {
           const data = await res.json();
-          setRestaurantName(data.name);
-          setMenuItems(data.menuItems || []);
+          setCityName(`${data.city}, ${data.country}`);
         } else {
-          setRestaurantName(`Outpost #${restaurantId}`);
+          setCityName(`Station #${restaurantId}`);
         }
       } catch {
-        setRestaurantName(`Outpost #${restaurantId}`);
+        setCityName(`Station #${restaurantId}`);
       }
     }
     loadData();
@@ -62,9 +51,8 @@ export default function ReviewPage({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          restaurantId: parseInt(restaurantId, 10),
-          menuItemId: selectedItemId ? parseInt(selectedItemId, 10) : null,
-          nomadCallsign: callsign.trim() || "Anonymous Wanderer",
+          cityId: parseInt(restaurantId, 10),
+          nomadCallsign: callsign.trim() || "Anonymous Nomad",
           rating,
           comment: comment.trim(),
         }),
@@ -73,94 +61,73 @@ export default function ReviewPage({
       const data = await res.json();
 
       if (res.status === 201) {
-        router.push(`/restaurant/${restaurantId}`);
+        router.push(`/`);
       } else {
         setBackendError(data.error || "Submission rejected by server.");
       }
     } catch {
-      setBackendError("Network failure. Could not connect to the Recon Mesh.");
+      setBackendError("Network failure. Could not connect to database.");
     } finally {
       setIsSubmitting(false);
     }
   }
 
   return (
-    <div className="min-h-screen bg-[#0A0B0E] text-[#F4F4F6] pb-16">
-      <main className="w-full max-w-[560px] mx-auto px-4 py-10 flex flex-col gap-6">
+    <div className="min-h-screen bg-[#F6F5F0] text-[#1C1E21] pb-16 flex flex-col items-center">
+      <main className="w-full max-w-[560px] px-5 py-12 flex flex-col gap-6">
         {/* Navigation */}
         <nav>
           <Link
-            href={`/restaurant/${restaurantId}`}
-            className="text-xs font-mono uppercase tracking-widest text-zinc-400 hover:text-white transition-colors"
+            href="/"
+            className="text-xs font-mono uppercase tracking-wider text-[#7A7D85] hover:text-[#1C1E21] transition-colors"
           >
-            ← Back to Outpost Station
+            ← Back to The Outpost
           </Link>
         </nav>
 
         {/* Header */}
-        <div className="border-b border-zinc-800 pb-4">
-          <span className="text-[10px] uppercase font-mono font-bold tracking-widest text-red-500">
-            Dispatch Log
+        <div className="border-b border-[#E6E3DB] pb-4">
+          <span className="text-[10px] uppercase font-mono font-semibold tracking-[0.2em] text-[#7A7D85]">
+            FIELD DISPATCH LOG
           </span>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white mt-1">
-            File Field Report
+          <h1 className="text-2xl sm:text-3xl font-medium tracking-tight text-[#1C1E21] font-mono mt-1">
+            Log Station Observations
           </h1>
-          <p className="text-xs sm:text-sm text-zinc-400 mt-1">
-            Station: <span className="text-zinc-200 font-semibold">{restaurantName || "Loading..."}</span>
+          <p className="text-xs text-[#5C6066] font-mono mt-1">
+            Station: <span className="text-[#1C1E21] font-semibold">{cityName || "Loading..."}</span>
           </p>
         </div>
 
         {/* Backend Error Box */}
         {backendError && (
-          <div className="bg-red-950/40 border border-red-800/80 rounded-xl p-4 flex flex-col gap-1">
-            <span className="text-[10px] font-mono uppercase font-bold tracking-wider text-red-400">
-              Error: Dispatch Rejected by Backend
+          <div className="bg-[#FBF0EE] border border-[#F0D5D0] rounded-xl p-4 flex flex-col gap-1">
+            <span className="text-[10px] font-mono uppercase font-bold tracking-wider text-[#963426]">
+              Error: Dispatch Rejected
             </span>
-            <p className="text-xs sm:text-sm text-red-200">{backendError}</p>
+            <p className="text-xs text-[#963426]">{backendError}</p>
           </div>
         )}
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+        <form onSubmit={handleSubmit} className="border border-[#E2DFD6] bg-white p-6 rounded-2xl flex flex-col gap-5 shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
           {/* Nomad Callsign */}
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs uppercase font-mono font-bold text-zinc-300">
-              Your Callsign / Handle (Optional)
+          <div className="flex flex-col gap-1.5 font-mono">
+            <label className="text-[10px] uppercase font-semibold text-[#7A7D85]">
+              Nomad Callsign / Handle
             </label>
             <input
               type="text"
+              placeholder="e.g. Scout_Levi or Nomad_Elena"
               value={callsign}
               onChange={(e) => setCallsign(e.target.value)}
-              placeholder="e.g. Scout_Levi or Nomad_Elena"
-              className="bg-[#12141A] border border-zinc-800 rounded-lg px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-red-500"
+              className="bg-[#FAF9F5] border border-[#E2DFD6] rounded-lg px-3.5 py-2.5 text-xs text-[#1C1E21] focus:outline-none focus:border-[#1C1E21]"
             />
           </div>
 
-          {/* Provision Target */}
-          {menuItems.length > 0 && (
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs uppercase font-mono font-bold text-zinc-300">
-                Target Provision / Item (Optional)
-              </label>
-              <select
-                value={selectedItemId}
-                onChange={(e) => setSelectedItemId(e.target.value)}
-                className="bg-[#12141A] border border-zinc-800 rounded-lg px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-red-500"
-              >
-                <option value="">General Outpost Review (No Specific Item)</option>
-                {menuItems.map((item) => (
-                  <option key={item.id} value={item.id}>
-                    {item.name} ({item.category})
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-
           {/* Star Picker (1 to 5) */}
-          <div className="flex flex-col gap-2">
-            <label className="text-xs uppercase font-mono font-bold text-zinc-300">
-              Score Rating (1 to 5)
+          <div className="flex flex-col gap-2 font-mono">
+            <label className="text-[10px] uppercase font-semibold text-[#7A7D85]">
+              Score (1 to 5 Stars)
             </label>
             <div className="flex items-center gap-2" role="radiogroup" aria-label="Rating">
               {[1, 2, 3, 4, 5].map((starValue) => {
@@ -174,12 +141,12 @@ export default function ReviewPage({
                     onClick={() => setRating(starValue)}
                     onMouseEnter={() => setHoveredRating(starValue)}
                     onMouseLeave={() => setHoveredRating(null)}
-                    className={`flex-1 h-12 flex items-center justify-center rounded-lg border text-2xl transition-all cursor-pointer ${
+                    className={`flex-1 h-11 flex items-center justify-center rounded-lg border text-xl transition-all cursor-pointer ${
                       isSelected
-                        ? "border-amber-400 bg-amber-500/20 text-amber-300 scale-105"
+                        ? "border-[#1C1E21] bg-[#1C1E21] text-white"
                         : isFilled
-                        ? "border-zinc-700 bg-zinc-900 text-amber-400"
-                        : "border-zinc-800 bg-[#12141A] text-zinc-700 hover:border-zinc-700"
+                        ? "border-[#C8C5BB] bg-[#F2EFE8] text-[#C27803]"
+                        : "border-[#E2DFD6] bg-[#FAF9F5] text-[#A2A6AF] hover:border-[#1C1E21]"
                     }`}
                     aria-label={`${starValue} star`}
                     aria-checked={isSelected}
@@ -190,23 +157,24 @@ export default function ReviewPage({
                 );
               })}
             </div>
-            <span className="text-[11px] text-zinc-500 font-mono">
+            <span className="text-[10px] text-[#7A7D85] font-mono">
               {rating !== null ? `${rating} of 5 selected` : "Select a score"}
             </span>
           </div>
 
           {/* Comment */}
-          <div className="flex flex-col gap-1.5">
-            <label htmlFor="comment" className="text-xs uppercase font-mono font-bold text-zinc-300">
-              Field Observations / Review
+          <div className="flex flex-col gap-1.5 font-mono">
+            <label htmlFor="comment" className="text-[10px] uppercase font-semibold text-[#7A7D85]">
+              Field Notes / Observations
             </label>
             <textarea
               id="comment"
               rows={4}
+              required
+              placeholder="Record wifi stability, focus cafes, walkability, safety, community vibe..."
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              placeholder="Record connection speeds, provision quality, noise levels, seating ergonomics..."
-              className="bg-[#12141A] border border-zinc-800 rounded-lg p-3.5 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-red-500 resize-none leading-relaxed"
+              className="bg-[#FAF9F5] border border-[#E2DFD6] rounded-lg p-3 text-xs text-[#1C1E21] placeholder-[#A2A6AF] focus:outline-none focus:border-[#1C1E21] resize-none leading-relaxed"
             />
           </div>
 
@@ -214,10 +182,10 @@ export default function ReviewPage({
           <button
             type="submit"
             disabled={!isFormValid || isSubmitting}
-            className={`w-full py-4 rounded-xl text-xs uppercase tracking-widest font-bold transition-all shadow-lg ${
+            className={`w-full py-3.5 rounded-xl text-xs uppercase tracking-widest font-semibold transition-all font-mono ${
               isFormValid && !isSubmitting
-                ? "bg-red-600 hover:bg-red-500 text-white cursor-pointer shadow-red-950"
-                : "bg-zinc-800 text-zinc-500 cursor-not-allowed border border-zinc-700/50"
+                ? "bg-[#1C1E21] hover:bg-[#35393F] text-white cursor-pointer shadow-sm"
+                : "bg-[#EAE7DF] text-[#A2A6AF] cursor-not-allowed border border-[#DDD9CE]"
             }`}
           >
             {isSubmitting ? "Transmitting..." : "Submit Field Report"}
