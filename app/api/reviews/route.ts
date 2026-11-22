@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { restaurantId, rating, comment } = body;
+    const { restaurantId, menuItemId, nomadCallsign, rating, comment } = body;
 
     // Check 1: rating is an integer from 1 to 5
     if (
@@ -35,14 +35,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check 3: restaurantId refers to a restaurant that actually exists (database lookup)
+    // Check 3: restaurantId refers to a restaurant that actually exists
     if (
       typeof restaurantId !== "number" ||
       !Number.isInteger(restaurantId) ||
       restaurantId <= 0
     ) {
       return NextResponse.json(
-        { error: "Restaurant does not exist." },
+        { error: "Outpost does not exist." },
         { status: 400 }
       );
     }
@@ -53,16 +53,35 @@ export async function POST(request: NextRequest) {
 
     if (restaurantExists.length === 0) {
       return NextResponse.json(
-        { error: "Restaurant does not exist." },
+        { error: "Outpost does not exist." },
         { status: 400 }
       );
     }
 
-    // Insert review using raw SQL
+    // Optional Check 4: menuItemId validation
+    let validMenuItemId: number | null = null;
+    if (menuItemId !== undefined && menuItemId !== null && menuItemId !== "") {
+      const parsedItemId = Number(menuItemId);
+      if (Number.isInteger(parsedItemId) && parsedItemId > 0) {
+        const itemExists = await sql`
+          SELECT id FROM menu_items WHERE id = ${parsedItemId} AND restaurant_id = ${restaurantId} LIMIT 1;
+        `;
+        if (itemExists.length > 0) {
+          validMenuItemId = parsedItemId;
+        }
+      }
+    }
+
+    const cleanCallsign = typeof nomadCallsign === "string" && nomadCallsign.trim().length > 0
+      ? nomadCallsign.trim().slice(0, 50)
+      : "Anonymous Wanderer";
+
     const trimmedComment = comment.trim();
+
+    // Insert review using raw SQL
     const result = await sql`
-      INSERT INTO reviews (restaurant_id, rating, comment)
-      VALUES (${restaurantId}, ${rating}, ${trimmedComment})
+      INSERT INTO reviews (restaurant_id, menu_item_id, nomad_callsign, rating, comment)
+      VALUES (${restaurantId}, ${validMenuItemId}, ${cleanCallsign}, ${rating}, ${trimmedComment})
       RETURNING id;
     `;
 
