@@ -30,13 +30,13 @@ interface CityDetail extends CityDestination {
 
 export default function NomadTravelApp({ defaultCityId }: { defaultCityId?: number }) {
   const [destinations, setDestinations] = useState<CityDestination[]>([]);
-  const [selectedCountry, setSelectedCountry] = useState<string>("Japan");
+  const [selectedCountry, setSelectedCountry] = useState<string>("Thailand");
   const [selectedCityId, setSelectedCityId] = useState<number | null>(defaultCityId || null);
   const [cityData, setCityData] = useState<CityDetail | null>(null);
   const [loadingDestinations, setLoadingDestinations] = useState(true);
   const [loadingCity, setLoadingCity] = useState(false);
 
-  // Enlist Modal
+  // Enlist in Network Modal
   const [isJoinOpen, setIsJoinOpen] = useState(false);
   const [callsign, setCallsign] = useState("");
   const [enlistDone, setEnlistDone] = useState(false);
@@ -62,7 +62,7 @@ export default function NomadTravelApp({ defaultCityId }: { defaultCityId?: numb
           if (list.length > 0) {
             const initialCity = defaultCityId 
               ? list.find(d => d.id === defaultCityId) || list[0]
-              : list[0];
+              : list.find(d => d.country === "Thailand") || list[0];
             setSelectedCountry(initialCity.country);
             setSelectedCityId(initialCity.id);
           }
@@ -117,7 +117,7 @@ export default function NomadTravelApp({ defaultCityId }: { defaultCityId?: numb
       setIsJoinOpen(false);
       setEnlistDone(false);
       setCallsign("");
-    }, 2000);
+    }, 1800);
   };
 
   const handleReviewSubmit = async (e: React.FormEvent) => {
@@ -150,6 +150,12 @@ export default function NomadTravelApp({ defaultCityId }: { defaultCityId?: numb
           const updatedJson = await refreshed.json();
           setCityData(updatedJson);
         }
+        // Also refresh list to update rating count/average
+        const resList = await fetch("/api/cities");
+        if (resList.ok) {
+          const listJson = await resList.json();
+          setDestinations(listJson.destinations || []);
+        }
       } else {
         setReviewError(json.error || "Failed to submit review.");
       }
@@ -170,41 +176,50 @@ export default function NomadTravelApp({ defaultCityId }: { defaultCityId?: numb
   };
 
   return (
-    <div className="min-h-screen bg-[#F6F5F0] text-[#1C1E21] flex flex-col items-center">
-      <div className="w-full max-w-[680px] px-5 py-12 flex flex-col gap-10">
+    <div className="min-h-screen bg-[#F6F5F0] text-[#1C1E21] flex flex-col items-center selection:bg-[#E2DDD0]">
+      <div className="w-full max-w-[700px] px-5 py-12 flex flex-col gap-10">
         
-        {/* 1. CENTRALIZED TITLE & PLEASING MINIMAL HEADER */}
-        <header className="flex flex-col items-center text-center gap-2.5 pt-4 border-b border-[#E6E3DB] pb-10">
-          <span className="text-[11px] uppercase font-mono tracking-[0.25em] text-[#7A7D85]">
-            FIELD INTELLIGENCE // 01
-          </span>
+        {/* 1. TOP SECTION WITH HIGH CONTRAST & TYPOGRAPHIC HIERARCHY */}
+        <header className="flex flex-col items-center text-center gap-3 pt-2 border-b border-[#DDD9CE] pb-9">
           
-          <h1 className="text-3xl sm:text-4xl font-normal tracking-[0.15em] uppercase text-[#1C1E21] font-mono">
+          {/* Micro-Tag Badge */}
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EAE7DE] border border-[#D5D1C4] shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#3B82F6] animate-pulse"></span>
+            <span className="text-[10px] sm:text-[11px] uppercase font-mono tracking-[0.22em] text-[#555962] font-medium">
+              FIELD INTELLIGENCE // NETWORK MESH v2.4
+            </span>
+          </div>
+          
+          {/* Main Title: Sharp, Deep Obsidian Charcoal */}
+          <h1 className="text-3xl sm:text-5xl font-extrabold tracking-[0.16em] uppercase text-[#0F1012] font-mono mt-1">
             THE OUTPOST
           </h1>
 
-          <p className="text-xs sm:text-sm text-[#5C6066] font-mono tracking-wide max-w-[460px] leading-relaxed">
+          {/* Subtitle: Clean Crisp Gray-Charcoal */}
+          <p className="text-xs sm:text-sm text-[#454950] font-mono tracking-wide max-w-[500px] leading-relaxed">
             A decentralized field intelligence and travel review platform for digital nomads.
           </p>
 
-          <div className="mt-2">
+          {/* High-Contrast Action Button */}
+          <div className="mt-2.5">
             <button
               onClick={() => setIsJoinOpen(true)}
-              className="text-[11px] font-mono tracking-wider uppercase px-4 py-1.5 rounded-full border border-[#D5D2C8] bg-white hover:bg-[#EFECE4] text-[#4A4E54] hover:text-[#1C1E21] transition-all shadow-[0_1px_3px_rgba(0,0,0,0.02)] cursor-pointer"
+              className="text-[11px] font-mono tracking-wider uppercase px-4 py-1.5 rounded-full bg-[#202328] hover:bg-[#101214] text-[#F6F5F0] transition-all shadow-[0_2px_6px_rgba(0,0,0,0.08)] cursor-pointer border border-[#141618] font-medium flex items-center gap-1.5"
             >
-              + Enlist in Network
+              <span className="text-[#A0A5B0]">+</span>
+              <span>Enlist in Network</span>
             </button>
           </div>
         </header>
 
-        {/* 2. TERRITORIES / COUNTRIES */}
-        <section className="flex flex-col gap-2.5">
-          <div className="flex items-center justify-between border-b border-[#E6E3DB] pb-1.5">
-            <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#7A7D85]">
-              TERRITORIES
+        {/* 2. REGIONS / TERRITORIES SELECTION */}
+        <section className="flex flex-col gap-3">
+          <div className="flex items-center justify-between border-b border-[#DDD9CE] pb-2">
+            <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#636770] font-semibold">
+              REGIONS & TERRITORIES
             </span>
-            <span className="text-[10px] font-mono text-[#7A7D85]">
-              {countries.length} REGIONS
+            <span className="text-[10px] font-mono text-[#737780]">
+              {countries.length} ACTIVE NATIONS
             </span>
           </div>
 
@@ -215,10 +230,10 @@ export default function NomadTravelApp({ defaultCityId }: { defaultCityId?: numb
                 <button
                   key={c}
                   onClick={() => handleCountryChange(c)}
-                  className={`text-xs font-mono tracking-wider uppercase px-4 py-2 rounded-lg transition-all cursor-pointer border ${
+                  className={`text-xs font-mono tracking-wider uppercase px-4 py-2 rounded-lg transition-all cursor-pointer border whitespace-nowrap ${
                     active
-                      ? "bg-white text-[#1C1E21] border-[#C8C5BB] font-semibold shadow-[0_2px_6px_rgba(0,0,0,0.04)]"
-                      : "bg-[#ECE9E1] text-[#63666E] border-transparent hover:border-[#D5D2C8] hover:text-[#1C1E21]"
+                      ? "bg-white text-[#0F1012] border-[#BBB7AC] font-bold shadow-[0_2px_6px_rgba(0,0,0,0.05)]"
+                      : "bg-[#EAE7DF] text-[#555962] border-transparent hover:border-[#D0CCC1] hover:text-[#0F1012]"
                   }`}
                 >
                   {c}
@@ -228,304 +243,347 @@ export default function NomadTravelApp({ defaultCityId }: { defaultCityId?: numb
           </div>
         </section>
 
-        {/* 3. CITIES IN SELECTED COUNTRY */}
-        <section className="flex flex-col gap-2.5">
-          <div className="flex items-center justify-between border-b border-[#E6E3DB] pb-1.5">
-            <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#7A7D85]">
+        {/* 3. CITIES IN SELECTED COUNTRY (MINIMUM 3 HUBS PER NATION) */}
+        <section className="flex flex-col gap-3">
+          <div className="flex items-center justify-between border-b border-[#DDD9CE] pb-2">
+            <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#636770] font-semibold">
               STATIONS // {selectedCountry.toUpperCase()}
             </span>
-            <span className="text-[10px] font-mono text-[#7A7D85]">
-              {citiesInCountry.length} HUBS
+            <span className="text-[10px] font-mono text-[#737780]">
+              {citiesInCountry.length} NOMAD HUBS
             </span>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             {citiesInCountry.map((city) => {
               const active = city.id === selectedCityId;
               return (
                 <button
                   key={city.id}
                   onClick={() => setSelectedCityId(city.id)}
-                  className={`p-3.5 rounded-lg border text-left flex flex-col gap-1 transition-all cursor-pointer ${
+                  className={`p-3.5 rounded-xl border text-left flex flex-col justify-between gap-2.5 transition-all cursor-pointer ${
                     active
-                      ? "border-[#1C1E21] bg-white text-[#1C1E21] shadow-[0_2px_8px_rgba(0,0,0,0.05)]"
-                      : "border-[#E2DFD6] bg-white/70 text-[#5C6066] hover:border-[#C8C5BB] hover:bg-white"
+                      ? "bg-white border-[#B4AF9F] shadow-[0_3px_10px_rgba(0,0,0,0.04)] ring-1 ring-[#B4AF9F]"
+                      : "bg-[#ECE9E0] border-[#DCD8CD] hover:border-[#CBC6BA] hover:bg-[#E6E3DA]"
                   }`}
                 >
-                  <div className="flex items-center justify-between w-full">
-                    <span className="text-xs font-mono font-semibold tracking-wide text-[#1C1E21]">
-                      {city.city}
-                    </span>
-                    <span className="text-[11px] font-mono font-medium text-[#C27803]">
-                      {city.averageRating ? `★ ${city.averageRating}` : "—"}
+                  <div>
+                    <div className="flex items-center justify-between gap-1">
+                      <span className={`text-xs font-mono font-bold tracking-wide uppercase ${active ? "text-[#0F1012]" : "text-[#2A2D33]"}`}>
+                        {city.city}
+                      </span>
+                      <span className="text-[10px] font-mono text-[#B46200] font-semibold shrink-0">
+                        ★ {city.averageRating !== null ? city.averageRating.toFixed(1) : "—"}
+                      </span>
+                    </div>
+                    <span className="text-[10px] font-mono text-[#6A6E78] block truncate mt-0.5">
+                      {city.area}
                     </span>
                   </div>
-                  <span className="text-[10px] font-mono text-[#7A7D85] truncate">
-                    {city.area}
-                  </span>
+
+                  <div className="flex items-center justify-between pt-1 border-t border-[#E2DED4] text-[10px] font-mono text-[#52565F]">
+                    <span>{city.wifiSpeed}</span>
+                    <span className="font-semibold text-[#30333A]">{city.monthlyCost}</span>
+                  </div>
                 </button>
               );
             })}
           </div>
         </section>
 
-        {/* 4. ACTIVE CITY PROFILE & REVIEWS */}
+        {/* 4. STATION DETAIL VIEW (CAREFULLY SPACED & ALIGNED) */}
         {loadingCity ? (
-          <div className="py-16 flex flex-col items-center justify-center gap-2">
-            <div className="w-5 h-5 border-2 border-[#1C1E21] border-t-transparent rounded-full animate-spin" />
-            <span className="text-[11px] font-mono tracking-wider text-[#7A7D85] uppercase">
-              Accessing station records...
-            </span>
+          <div className="p-12 text-center text-xs font-mono text-[#7A7E88] border border-[#DDD9CE] rounded-2xl bg-white/40">
+            TRANSMITTING STATION TELEMETRY...
           </div>
         ) : cityData ? (
-          <div className="flex flex-col gap-8 border-t border-[#E6E3DB] pt-6">
+          <div className="p-6 sm:p-8 rounded-2xl border border-[#D5D1C4] bg-white shadow-[0_4px_24px_rgba(0,0,0,0.02)] flex flex-col gap-7">
             
-            {/* Overview Card */}
-            <div className="bg-white border border-[#E2DFD6] rounded-xl p-6 flex flex-col gap-5 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#7A7D85] bg-[#F2EFE8] px-2 py-0.5 rounded">
-                    {cityData.country} · {cityData.area}
+            {/* Station Header: Spacious, Uncramped Flex Container with Full Word Wrap */}
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-5 border-b border-[#E8E5DC] pb-6">
+              
+              {/* Left Column: Full Width / Spacious */}
+              <div className="flex-1 min-w-0 flex flex-col gap-2.5">
+                
+                {/* Meta Badges */}
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-[10px] uppercase font-mono tracking-wider px-2.5 py-0.5 rounded bg-[#EDEAE1] text-[#4A4E56] font-medium border border-[#DDD9CE]">
+                    {cityData.country}
                   </span>
-                  <h2 className="text-2xl sm:text-3xl font-medium tracking-tight text-[#1C1E21] font-mono mt-2">
-                    {cityData.city}
-                  </h2>
-                  <p className="text-xs sm:text-sm text-[#4A4E54] font-mono mt-1.5 leading-relaxed max-w-[440px]">
-                    {cityData.description}
-                  </p>
+                  <span className="text-[#AAA69D] text-xs font-mono">/</span>
+                  <span className="text-[10px] uppercase font-mono tracking-wider px-2.5 py-0.5 rounded bg-[#EDEAE1] text-[#4A4E56] font-medium border border-[#DDD9CE]">
+                    {cityData.area}
+                  </span>
                 </div>
 
-                <div className="flex flex-col items-end text-right border border-[#E8E5DD] rounded-lg p-3.5 bg-[#FAF9F5] min-w-[95px]">
-                  <span className="text-3xl sm:text-4xl font-normal font-mono text-[#1C1E21] tracking-tight leading-none">
-                    {cityData.averageRating !== null ? cityData.averageRating : "—"}
-                  </span>
-                  <span className="text-[10px] font-mono text-[#C27803] mt-1 font-semibold">
-                    {cityData.averageRating ? "★ VERIFIED" : "UNRATED"}
-                  </span>
-                  <span className="text-[10px] font-mono text-[#7A7D85] mt-1">
-                    {cityData.totalReviews} {cityData.totalReviews === 1 ? "report" : "reports"}
-                  </span>
-                </div>
+                {/* Station City Name */}
+                <h2 className="text-2xl sm:text-3xl font-mono uppercase tracking-wide text-[#0F1012] font-bold">
+                  {cityData.city}
+                </h2>
+
+                {/* Tagline / Explanation: Spacious, Properly Spaced and Aligned */}
+                <p className="text-xs sm:text-sm text-[#42464D] font-mono leading-relaxed max-w-[520px]">
+                  {cityData.tagline}
+                </p>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 border-t border-[#EFECE4] pt-4 font-mono text-xs">
-                <div className="flex flex-col">
-                  <span className="text-[10px] uppercase text-[#7A7D85]">Verified Wifi</span>
-                  <span className="text-[#1C1E21] font-semibold mt-0.5">{cityData.wifiSpeed}</span>
+              {/* Right Column: Rating Box Badge (Shrink-0, Never Compressing Left Content) */}
+              <div className="shrink-0 self-start sm:self-auto flex flex-col items-center justify-center px-4 py-3.5 rounded-xl border border-[#DDD9CE] bg-[#FAF9F5] shadow-[0_2px_8px_rgba(0,0,0,0.02)] min-w-[110px] text-center">
+                <span className="text-3xl sm:text-4xl font-mono font-bold text-[#0F1012] leading-none">
+                  {cityData.averageRating !== null ? cityData.averageRating.toFixed(1) : "—"}
+                </span>
+                <div className="flex items-center gap-1 mt-1.5 text-[#B46200] text-[10px] font-mono uppercase tracking-wider font-semibold">
+                  <span>★</span>
+                  <span>{cityData.averageRating !== null ? "VERIFIED" : "UNRATED"}</span>
                 </div>
-                <div className="flex flex-col">
-                  <span className="text-[10px] uppercase text-[#7A7D85]">Monthly Living Est.</span>
-                  <span className="text-[#1C1E21] font-semibold mt-0.5">{cityData.monthlyCost}</span>
-                </div>
-                <div className="flex flex-col col-span-2 sm:col-span-1">
-                  <span className="text-[10px] uppercase text-[#7A7D85]">Nomad Atmosphere</span>
-                  <span className="text-[#5C6066] mt-0.5 truncate">{cityData.tagline}</span>
-                </div>
+                <span className="text-[10px] font-mono text-[#70747C] mt-0.5">
+                  {cityData.totalReviews} {cityData.totalReviews === 1 ? "field review" : "field reviews"}
+                </span>
               </div>
             </div>
 
-            {/* Field Reviews Feed */}
-            <div className="flex flex-col gap-4">
-              <div className="flex items-center justify-between border-b border-[#E6E3DB] pb-2">
-                <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#7A7D85]">
-                  FIELD DISPATCHES ({cityData.totalReviews})
+            {/* Station Telemetry Metrics Bar */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 p-4 rounded-xl bg-[#F4F1E8] border border-[#DDD9CE]">
+              <div className="flex flex-col gap-0.5">
+                <span className="text-[9px] font-mono uppercase tracking-wider text-[#6A6E78]">WIFI UPLINK</span>
+                <span className="text-xs sm:text-sm font-mono font-bold text-[#0F1012]">{cityData.wifiSpeed}</span>
+              </div>
+              <div className="flex flex-col gap-0.5">
+                <span className="text-[9px] font-mono uppercase tracking-wider text-[#6A6E78]">EST. MONTHLY BURN</span>
+                <span className="text-xs sm:text-sm font-mono font-bold text-[#0F1012]">{cityData.monthlyCost}</span>
+              </div>
+              <div className="col-span-2 sm:col-span-1 flex flex-col gap-0.5">
+                <span className="text-[9px] font-mono uppercase tracking-wider text-[#6A6E78]">NOMAD DISTRICT</span>
+                <span className="text-xs sm:text-sm font-mono font-bold text-[#0F1012] truncate">{cityData.area}</span>
+              </div>
+            </div>
+
+            {/* Field Intelligence Briefing */}
+            <div className="flex flex-col gap-2 text-xs font-mono text-[#3E4249] leading-relaxed border-b border-[#E8E5DC] pb-6">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-[#737780] font-semibold">
+                TACTICAL FIELD BRIEFING
+              </span>
+              <p className="bg-[#FAF9F5] p-3.5 rounded-lg border border-[#E6E3DA]">
+                {cityData.description}
+              </p>
+            </div>
+
+            {/* Latest Field Report */}
+            {cityData.latestReview && (
+              <div className="flex flex-col gap-2.5 border-b border-[#E8E5DC] pb-6">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-[#737780] font-semibold">
+                    LATEST FIELD REPORT
+                  </span>
+                  <span className="text-[10px] font-mono text-[#737780]">
+                    {formatDate(cityData.latestReview.createdAt)}
+                  </span>
+                </div>
+                
+                <div className="p-4 rounded-xl border border-[#DDD9CE] bg-[#FAF9F5] flex flex-col gap-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center text-[#B46200] text-sm">
+                      {"★".repeat(cityData.latestReview.rating)}
+                      <span className="text-[#D8D4C8]">{"★".repeat(5 - cityData.latestReview.rating)}</span>
+                    </div>
+                    <span className="text-[10px] font-mono text-[#585C65] font-medium">
+                      @{cityData.latestReview.nomadCallsign}
+                    </span>
+                  </div>
+                  <p className="text-xs font-mono text-[#25282E] leading-relaxed italic">
+                    “{cityData.latestReview.comment}”
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Historical Dispatches */}
+            {cityData.reviews && cityData.reviews.length > 1 && (
+              <div className="flex flex-col gap-3 border-b border-[#E8E5DC] pb-6">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-[#737780] font-semibold">
+                  HISTORICAL DISPATCHES ({cityData.reviews.length - 1})
                 </span>
 
-                <button
-                  onClick={() => setIsReviewOpen(!isReviewOpen)}
-                  className="text-[11px] font-mono tracking-wider uppercase px-3 py-1 rounded bg-[#EAE7DF] hover:bg-[#DDD9CE] text-[#1C1E21] font-medium transition-colors cursor-pointer"
-                >
-                  {isReviewOpen ? "− Cancel" : "+ File Report"}
-                </button>
+                <div className="flex flex-col gap-2.5">
+                  {cityData.reviews.slice(1).map((rev) => (
+                    <div key={rev.id} className="p-3 rounded-lg border border-[#E6E3DA] bg-[#FAF9F6] flex flex-col gap-1 text-xs font-mono">
+                      <div className="flex items-center justify-between text-[10px]">
+                        <div className="flex items-center text-[#B46200]">
+                          {"★".repeat(rev.rating)}
+                          <span className="text-[#D8D4C8]">{"★".repeat(5 - rev.rating)}</span>
+                        </div>
+                        <span className="text-[#7A7E86]">
+                          @{rev.nomadCallsign} · {formatDate(rev.createdAt)}
+                        </span>
+                      </div>
+                      <p className="text-[#3A3D44] mt-0.5 leading-relaxed">
+                        {rev.comment}
+                      </p>
+                    </div>
+                  ))}
+                </div>
               </div>
+            )}
 
-              {/* Inline Review Form */}
-              {isReviewOpen && (
-                <form
-                  onSubmit={handleReviewSubmit}
-                  className="border border-[#E2DFD6] bg-white p-5 rounded-xl flex flex-col gap-3.5 font-mono shadow-[0_2px_8px_rgba(0,0,0,0.03)]"
+            {/* Inline Review Dispatch Form */}
+            <div className="flex flex-col gap-4">
+              {!isReviewOpen ? (
+                <button
+                  onClick={() => setIsReviewOpen(true)}
+                  className="w-full py-3 rounded-xl border border-[#C5C0B2] bg-[#FAF9F5] hover:bg-white text-xs font-mono uppercase tracking-wider text-[#0F1012] font-semibold transition-all shadow-[0_1px_3px_rgba(0,0,0,0.02)] cursor-pointer"
                 >
-                  <span className="text-xs uppercase tracking-wider text-[#1C1E21] font-semibold">
-                    Record Field Observation for {cityData.city}
-                  </span>
-
-                  {reviewError && (
-                    <p className="text-xs text-[#963426] border border-[#F0D5D0] p-2 rounded bg-[#FBF0EE]">
-                      {reviewError}
-                    </p>
-                  )}
-
-                  <div className="flex flex-col gap-1">
-                    <label className="text-[10px] uppercase text-[#7A7D85]">Your Callsign</label>
-                    <input
-                      type="text"
-                      placeholder="e.g. Scout_Levi or Nomad_Elena"
-                      value={reviewCallsign}
-                      onChange={(e) => setReviewCallsign(e.target.value)}
-                      className="bg-[#FAF9F5] border border-[#E2DFD6] rounded p-2 text-xs text-[#1C1E21] focus:outline-none focus:border-[#1C1E21]"
-                    />
+                  + Submit a Field Review for {cityData.city}
+                </button>
+              ) : (
+                <form onSubmit={handleReviewSubmit} className="p-4 sm:p-5 rounded-xl border border-[#C5C0B2] bg-[#FAF9F5] flex flex-col gap-4">
+                  <div className="flex items-center justify-between border-b border-[#E0DCD2] pb-2">
+                    <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#0F1012]">
+                      NEW FIELD DISPATCH // {cityData.city.toUpperCase()}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setIsReviewOpen(false)}
+                      className="text-xs font-mono text-[#7A7E86] hover:text-[#0F1012] cursor-pointer"
+                    >
+                      [CANCEL]
+                    </button>
                   </div>
 
-                  <div className="flex flex-col gap-1">
-                    <label className="text-[10px] uppercase text-[#7A7D85]">Score (1 to 5 Stars)</label>
+                  {reviewError && (
+                    <div className="p-2.5 rounded bg-[#FBEBE8] border border-[#F0BCB4] text-[11px] font-mono text-[#9C2014]">
+                      {reviewError}
+                    </div>
+                  )}
+
+                  {/* Rating Selector */}
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[10px] font-mono uppercase tracking-wider text-[#6A6E78]">
+                      EVALUATION SCORE (1-5 STARS)
+                    </label>
                     <div className="flex items-center gap-2">
                       {[1, 2, 3, 4, 5].map((star) => (
                         <button
                           key={star}
                           type="button"
                           onClick={() => setReviewRating(star)}
-                          className={`w-9 h-9 rounded border text-sm font-mono transition-all cursor-pointer ${
-                            reviewRating === star
-                              ? "bg-[#1C1E21] text-white border-[#1C1E21] font-bold"
-                              : "bg-[#FAF9F5] text-[#5C6066] border-[#E2DFD6] hover:border-[#1C1E21]"
+                          className={`w-9 h-9 rounded-lg text-sm font-mono flex items-center justify-center transition-all cursor-pointer border ${
+                            reviewRating >= star
+                              ? "bg-[#FAF0D9] text-[#B46200] border-[#E8C888] font-bold"
+                              : "bg-white text-[#9CA0AA] border-[#DDD9CE]"
                           }`}
                         >
-                          {star}
+                          ★
                         </button>
                       ))}
+                      <span className="text-xs font-mono text-[#52565F] ml-2 font-medium">
+                        {reviewRating} of 5 Stars
+                      </span>
                     </div>
                   </div>
 
-                  <div className="flex flex-col gap-1">
-                    <label className="text-[10px] uppercase text-[#7A7D85]">Field Notes</label>
+                  {/* Callsign Input */}
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[10px] font-mono uppercase tracking-wider text-[#6A6E78]">
+                      NOMAD CALLSIGN (OPTIONAL)
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. RogueDev_42"
+                      value={reviewCallsign}
+                      onChange={(e) => setReviewCallsign(e.target.value)}
+                      className="p-2.5 rounded-lg border border-[#DDD9CE] bg-white text-xs font-mono text-[#0F1012] outline-none focus:border-[#0F1012]"
+                    />
+                  </div>
+
+                  {/* Dispatch Comment */}
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[10px] font-mono uppercase tracking-wider text-[#6A6E78]">
+                      FIELD DISPATCH INTEL
+                    </label>
                     <textarea
-                      rows={3}
                       required
-                      placeholder="Detail internet speeds, noise levels, focus cafes, walkability, or community..."
+                      rows={3}
+                      placeholder="Detail wifi stability, coffee shops, noise level, community vibe, power outlets..."
                       value={reviewComment}
                       onChange={(e) => setReviewComment(e.target.value)}
-                      className="bg-[#FAF9F5] border border-[#E2DFD6] rounded p-2 text-xs text-[#1C1E21] focus:outline-none focus:border-[#1C1E21] resize-none leading-relaxed"
+                      className="p-2.5 rounded-lg border border-[#DDD9CE] bg-white text-xs font-mono text-[#0F1012] outline-none focus:border-[#0F1012] leading-relaxed resize-none"
                     />
                   </div>
 
                   <button
                     type="submit"
-                    disabled={submittingReview || !reviewComment.trim()}
-                    className="w-full py-2.5 rounded bg-[#1C1E21] text-white text-xs uppercase tracking-widest font-semibold hover:bg-[#35393F] transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                    disabled={submittingReview}
+                    className="w-full py-2.5 rounded-lg bg-[#202328] hover:bg-[#101214] text-[#F6F5F0] text-xs font-mono uppercase tracking-wider font-semibold transition-all cursor-pointer disabled:opacity-50"
                   >
-                    {submittingReview ? "Submitting..." : "Submit Dispatch"}
+                    {submittingReview ? "BROADCASTING DISPATCH..." : "BROADCAST FIELD REVIEW"}
                   </button>
                 </form>
               )}
-
-              {/* Highlighted Latest Review */}
-              {cityData.latestReview && (
-                <div className="border border-[#E2DFD6] p-5 rounded-xl flex flex-col gap-2 bg-white shadow-[0_1px_4px_rgba(0,0,0,0.02)]">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-mono uppercase tracking-wider font-semibold text-[#824D1B] bg-[#F7F0E6] px-2 py-0.5 rounded border border-[#EDE2D2]">
-                      Latest Field Dispatch
-                    </span>
-                    <span className="text-[10px] font-mono text-[#7A7D85]">
-                      {formatDate(cityData.latestReview.createdAt)}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center gap-2 font-mono text-xs mt-1">
-                    <span className="text-[#1C1E21] font-semibold">
-                      @{cityData.latestReview.nomadCallsign}
-                    </span>
-                    <span className="text-[#A2A6AF]">·</span>
-                    <span className="text-[#C27803]">
-                      {"★".repeat(cityData.latestReview.rating)}
-                    </span>
-                  </div>
-
-                  <p className="text-xs sm:text-sm text-[#383B40] leading-relaxed font-mono mt-0.5">
-                    &ldquo;{cityData.latestReview.comment}&rdquo;
-                  </p>
-                </div>
-              )}
-
-              {/* Past Reviews List */}
-              {cityData.reviews.length > 0 && (
-                <div className="flex flex-col divide-y divide-[#EAE7DF] border-y border-[#EAE7DF] bg-white px-5 rounded-xl border">
-                  {cityData.reviews.map((rev) => (
-                    <div key={rev.id} className="py-4 flex flex-col gap-1 font-mono">
-                      <div className="flex items-center justify-between text-xs">
-                        <div className="flex items-center gap-2">
-                          <span className="text-[#1C1E21] font-medium">@{rev.nomadCallsign}</span>
-                          <span className="text-[#A2A6AF]">·</span>
-                          <span className="text-[#C27803]">{"★".repeat(rev.rating)}</span>
-                        </div>
-                        <span className="text-[10px] text-[#7A7D85]">
-                          {formatDate(rev.createdAt)}
-                        </span>
-                      </div>
-                      <p className="text-xs text-[#4A4E54] leading-relaxed">
-                        {rev.comment}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {cityData.totalReviews === 0 && (
-                <div className="py-8 text-center text-xs font-mono text-[#7A7D85] border border-dashed border-[#DCD9D0] rounded-xl bg-white/50">
-                  No dispatches recorded yet for {cityData.city}. Be the first wanderer to log an observation.
-                </div>
-              )}
             </div>
+
           </div>
         ) : null}
 
-        {/* 5. MINIMALIST FOOTER */}
-        <footer className="pt-8 pb-4 text-center border-t border-[#E6E3DB] flex flex-col items-center gap-1.5">
-          <p className="text-[10px] text-[#7A7D85] font-mono tracking-[0.2em] uppercase">
-            THE OUTPOST · DECENTRALIZED NOMAD MESH · MADE BY AN
-          </p>
+        {/* 5. FOOTER ATTRIBUTION */}
+        <footer className="text-center py-6 border-t border-[#DDD9CE] text-[10px] font-mono text-[#737780] tracking-widest uppercase">
+          THE OUTPOST · DECENTRALIZED NOMAD MESH · MADE BY AN
         </footer>
+
       </div>
 
-      {/* 6. SEAMLESS ENLIST MODAL */}
+      {/* 6. ENLIST IN NETWORK MODAL */}
       {isJoinOpen && (
-        <div className="fixed inset-0 z-50 bg-[#1C1E21]/40 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white border border-[#E2DFD6] w-full max-w-sm rounded-2xl p-6 flex flex-col gap-4 font-mono shadow-xl relative">
-            <button
-              onClick={() => setIsJoinOpen(false)}
-              className="absolute top-4 right-4 text-[#7A7D85] hover:text-[#1C1E21] text-xs cursor-pointer"
-            >
-              [ESC]
-            </button>
-
-            <span className="text-[10px] uppercase tracking-wider text-[#7A7D85]">
-              RECON NETWORK // ENLIST
-            </span>
-
-            <h3 className="text-lg font-normal text-[#1C1E21] tracking-tight">
-              Nomad Mesh Registration
-            </h3>
+        <div className="fixed inset-0 bg-[#0F1012]/30 backdrop-blur-[2px] flex items-center justify-center p-4 z-50">
+          <div className="bg-[#FAF9F5] border border-[#C5C0B2] p-6 rounded-2xl w-full max-w-[380px] shadow-[0_10px_30px_rgba(0,0,0,0.1)] flex flex-col gap-4">
+            <div className="flex items-center justify-between border-b border-[#E0DCD2] pb-2">
+              <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#0F1012]">
+                ENLIST IN NOMAD MESH
+              </span>
+              <button
+                onClick={() => setIsJoinOpen(false)}
+                className="text-xs font-mono text-[#7A7E86] hover:text-[#0F1012] cursor-pointer"
+              >
+                [X]
+              </button>
+            </div>
 
             {enlistDone ? (
-              <div className="border border-[#D4E8DC] bg-[#F2F8F4] p-4 rounded-xl text-center">
-                <span className="text-xs text-[#206638] font-semibold">
-                  Callsign @{callsign} registered to the mesh.
-                </span>
+              <div className="p-4 rounded-xl bg-[#E8F5E9] border border-[#C8E6C9] text-center flex flex-col gap-1">
+                <span className="text-xs font-mono font-bold text-[#2E7D32]">CALLSIGN REGISTERED</span>
+                <span className="text-[11px] font-mono text-[#388E3C]">Welcome to the mesh, nomad.</span>
               </div>
             ) : (
-              <form onSubmit={handleEnlistSubmit} className="flex flex-col gap-3">
+              <form onSubmit={handleEnlistSubmit} className="flex flex-col gap-3.5">
+                <p className="text-xs font-mono text-[#4E5259] leading-relaxed">
+                  Join the decentralized network. Register your nomad callsign to submit verified field intel.
+                </p>
+
                 <div className="flex flex-col gap-1">
-                  <label className="text-[10px] uppercase text-[#7A7D85]">Nomad Callsign</label>
+                  <label className="text-[10px] font-mono uppercase tracking-wider text-[#6A6E78]">
+                    CALLSIGN / HANDLE
+                  </label>
                   <input
                     type="text"
                     required
-                    placeholder="e.g. Scout_Levi"
+                    placeholder="e.g. Atlas_01"
                     value={callsign}
                     onChange={(e) => setCallsign(e.target.value)}
-                    className="bg-[#FAF9F5] border border-[#E2DFD6] rounded p-2 text-xs text-[#1C1E21] focus:outline-none focus:border-[#1C1E21]"
+                    className="p-2.5 rounded-lg border border-[#DDD9CE] bg-white text-xs font-mono text-[#0F1012] outline-none focus:border-[#0F1012]"
                   />
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full py-2.5 rounded bg-[#1C1E21] text-white text-xs uppercase tracking-widest font-semibold hover:bg-[#35393F] transition-colors cursor-pointer mt-1"
+                  className="w-full py-2.5 rounded-lg bg-[#202328] hover:bg-[#101214] text-[#F6F5F0] text-xs font-mono uppercase tracking-wider font-semibold transition-all cursor-pointer"
                 >
-                  Confirm Enlistment
+                  CONFIRM REGISTRATION
                 </button>
               </form>
             )}
           </div>
         </div>
       )}
+
     </div>
   );
 }

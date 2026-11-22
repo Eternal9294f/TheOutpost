@@ -24,7 +24,7 @@ if (!databaseUrl) {
 const sql = neon(databaseUrl);
 
 async function setup() {
-  console.log("Applying minimalist nomad travel schema...");
+  console.log("Applying nomad destination schema...");
   
   await sql.transaction([
     sql`DROP TABLE IF EXISTS reviews CASCADE`,
@@ -49,18 +49,76 @@ async function setup() {
     )`
   ]);
 
-  console.log("Seeding real global nomad hubs...");
+  console.log("Seeding authentic nomad-friendly countries & 3+ cities each...");
 
   const hubs = [
-    // Japan
+    // 1. Thailand
+    {
+      country: "Thailand",
+      city: "Chiang Mai",
+      area: "Nimman & Santitham",
+      wifi_speed: "650 Mbps",
+      monthly_cost: "$850/mo",
+      tagline: "The global epicenter of digital nomad culture, artisan cafes, and mountain escapes.",
+      description: "Unrivaled concentration of remote software engineers and creators. Ridiculously fast optical fiber, high-ergonomic cafes every 50 meters, and vibrant co-living compounds."
+    },
+    {
+      country: "Thailand",
+      city: "Bangkok",
+      area: "Thong Lo & Ekkamai",
+      wifi_speed: "800 Mbps",
+      monthly_cost: "$1,450/mo",
+      tagline: "Skyscraper coworking lounges, 24/7 transit, and boundless street gastronomy.",
+      description: "For nomads who thrive in electric metropolitan energy. Towering coworking high-rises, world-class street food, and seamless Skytrain connectivity."
+    },
+    {
+      country: "Thailand",
+      city: "Koh Phangan",
+      area: "Sri Thanu & Hin Kong",
+      wifi_speed: "300 Mbps",
+      monthly_cost: "$1,150/mo",
+      tagline: "Beachside wooden work shacks, wellness culture, and crypto/tech mastermind retreats.",
+      description: "The island outpost where tech meets tranquility. Work on product architecture while looking at the turquoise Gulf of Thailand, followed by sunset swims."
+    },
+
+    // 2. Indonesia
+    {
+      country: "Indonesia",
+      city: "Bali (Canggu)",
+      area: "Batu Bolong & Pererenan",
+      wifi_speed: "250 Mbps",
+      monthly_cost: "$1,350/mo",
+      tagline: "Open-air bamboo coworking compounds, surf breaks, and high-protein fuel bowls.",
+      description: "The surf and code capital of Southeast Asia. World-renowned nomad spaces like Dojo and Zin, vibrant networking meetups, and lush tropical villa living."
+    },
+    {
+      country: "Indonesia",
+      city: "Bali (Ubud)",
+      area: "Penestanan & Campuhan",
+      wifi_speed: "200 Mbps",
+      monthly_cost: "$1,100/mo",
+      tagline: "Jungle river valleys, quiet deep-work sanctuaries, and creative stillness.",
+      description: "For long-form writing, deep code sprints, and zero city noise. Work surrounded by palm canopies, organic coffee plantations, and meditation gardens."
+    },
+    {
+      country: "Indonesia",
+      city: "Lombok",
+      area: "Kuta Lombok",
+      wifi_speed: "180 Mbps",
+      monthly_cost: "$950/mo",
+      tagline: "Uncrowded reef bays, pristine nature, and an emerging frontier nomad community.",
+      description: "What Bali was 15 years ago. Peaceful, uncrowded roads, emerging high-speed fiber cafes, and breathtaking dramatic headlands."
+    },
+
+    // 3. Japan
     {
       country: "Japan",
       city: "Tokyo",
       area: "Shibuya & Daikanyama",
-      wifi_speed: "850 Mbps",
+      wifi_speed: "920 Mbps",
       monthly_cost: "$2,200/mo",
-      tagline: "Hyper-efficient infrastructure, pristine safety, and 24/7 focus hubs.",
-      description: "A haven for remote software engineers and designers. Unbeatable optical fiber, whisper-quiet cafes, and seamless train networks across the metropolis."
+      tagline: "Hyper-efficient infrastructure, pristine safety, and 24/7 silent acoustic focus pods.",
+      description: "The peak of urban focus culture. Blazing optical fiber, whisper-quiet cafes where everyone is locked in, and 3 AM safety with zero street friction."
     },
     {
       country: "Japan",
@@ -69,146 +127,179 @@ async function setup() {
       wifi_speed: "500 Mbps",
       monthly_cost: "$1,650/mo",
       tagline: "Historic machiya workhouses, zen temple gardens, and contemplative deep-work.",
-      description: "For nomads craving stillness. Work alongside the river in 100-year-old wooden teahouses wired with gigabit internet."
-    },
-    // China
-    {
-      country: "China",
-      city: "Chongqing",
-      area: "Yuzhong Peninsula",
-      wifi_speed: "650 Mbps",
-      monthly_cost: "$950/mo",
-      tagline: "Multi-layered cyberpunk architecture, high elevation fog, and 24hr tea houses.",
-      description: "A futuristic vertical 3D city. Ridiculously affordable living costs, blazing fiber, and neon skyline views from cliffside cafes."
+      description: "Work in renovated 100-year-old timber machiya teahouses overlooking weeping willows and the Kamogawa river, wired with gigabit internet."
     },
     {
-      country: "China",
-      city: "Shanghai",
-      area: "Jing'an & Former French Concession",
+      country: "Japan",
+      city: "Fukuoka",
+      area: "Tenjin & Daimyo",
       wifi_speed: "750 Mbps",
-      monthly_cost: "$1,850/mo",
-      tagline: "Global tech and venture epicenter flanked by tree-lined boutique avenues.",
-      description: "World-class specialty coffee density, bustling expat founder community, and bullet train connectivity to Hangzhou and Suzhou."
+      monthly_cost: "$1,400/mo",
+      tagline: "Japan's designated national startup hub, compact ocean living, and world-class ramen.",
+      description: "More affordable and relaxed than Tokyo with dedicated nomad startup visas, ocean breeze, and a thriving developer community in Tenjin."
     },
-    // India
+
+    // 4. Spain
     {
-      country: "India",
-      city: "Delhi",
-      area: "Hauz Khas & Lodhi",
-      wifi_speed: "350 Mbps",
-      monthly_cost: "$750/mo",
-      tagline: "Centuries-old Mughal tombs integrated with contemporary creator lofts.",
-      description: "India's capital presents unmatched affordability, vibrant creator hubs, and an energetic tech meetup landscape in South Delhi."
+      country: "Spain",
+      city: "Barcelona",
+      area: "El Poblenou & Gràcia",
+      wifi_speed: "600 Mbps",
+      monthly_cost: "$1,850/mo",
+      tagline: "300 days of Mediterranean sunlight, beachside cycling, and a massive 22@ tech cluster.",
+      description: "Europe's primary nomad powerhouse. Converted industrial lofts with fiber, 10-minute walk to the sea, and Thursday nomad meetups with 200+ attendees."
     },
+    {
+      country: "Spain",
+      city: "Valencia",
+      area: "Ruzafa & El Carmen",
+      wifi_speed: "500 Mbps",
+      monthly_cost: "$1,350/mo",
+      tagline: "Lush Turia park corridors, historic plazas, sunny terraces, and lower cost of living.",
+      description: "A calmer, more affordable sister to Barcelona. Incredible bike infrastructure, sprawling sunlit public parks, and a fast-growing international tech scene."
+    },
+    {
+      country: "Spain",
+      city: "Madrid",
+      area: "Malasaña & La Latina",
+      wifi_speed: "550 Mbps",
+      monthly_cost: "$1,650/mo",
+      tagline: "Majestic historic work libraries, endless tapas plazas, and vibrant cultural pulse.",
+      description: "Immersive Spanish urban life. Work from grand architectural libraries and specialty cafes in Malasaña, then join lively evening terrace discussions."
+    },
+
+    // 5. India
     {
       country: "India",
       city: "Goa",
       area: "Arambol & Anjuna",
       wifi_speed: "250 Mbps",
       monthly_cost: "$850/mo",
-      tagline: "Coastal sunsets, beachside work shacks, and a massive nomadic builder culture.",
-      description: "The primary nomad capital of South Asia. Open-air cowork spaces, morning yoga on the sand, and sunset community hackathons."
-    },
-    // Germany
-    {
-      country: "Germany",
-      city: "Frankfurt",
-      area: "Innenstadt & Sachsenhausen",
-      wifi_speed: "600 Mbps",
-      monthly_cost: "$2,300/mo",
-      tagline: "The continental digital routing exchange (DE-CIX) with rapid pan-European rail.",
-      description: "Extremely low latency internet, international banking and tech headquarters, and serene parks flanking the Main river."
+      tagline: "Coastal sunsets, seaside work shacks, and a high-energy nomadic builder ecosystem.",
+      description: "India's nomad paradise. Work with ocean breezes during the day, attend hacker houses and AI salons in the evening, and live steps from the Arabian Sea."
     },
     {
-      country: "Germany",
-      city: "Hamburg",
-      area: "Sternschanze & Speicherstadt",
-      wifi_speed: "520 Mbps",
-      monthly_cost: "$1,950/mo",
-      tagline: "Brick warehouse canals, maritime culture, and an independent developer ethos.",
-      description: "Alternative cafes, thriving indie design agencies, and clean public workspaces across one of Europe's greatest port cities."
+      country: "India",
+      city: "Dharamsala",
+      area: "Dharamkot & McLeod Ganj",
+      wifi_speed: "220 Mbps",
+      monthly_cost: "$650/mo",
+      tagline: "Crisp Himalayan pine forests, Tibetan monasteries, and tranquil mountain work decks.",
+      description: "Perched at the foot of the snowcapped Dhauladhar range. Pristine mountain air, serene rooftop cafes, and dirt-cheap living costs for deep focus."
     },
-    // Spain
     {
-      country: "Spain",
-      city: "Barcelona",
-      area: "El Poblenou & Gràcia",
-      wifi_speed: "550 Mbps",
-      monthly_cost: "$1,800/mo",
-      tagline: "300 days of Mediterranean sunlight, beach proximity, and a bustling 22@ tech hub.",
-      description: "One of Europe's top digital nomad capitals. Walkable pedestrian boulevards, vibrant tapas bars, and a thriving international remote worker community."
+      country: "India",
+      city: "Bangalore",
+      area: "Indiranagar & Koramangala",
+      wifi_speed: "500 Mbps",
+      monthly_cost: "$950/mo",
+      tagline: "India's Silicon Valley, 24/7 third-wave coffee shops, and unmatched founder density.",
+      description: "Every table is building a startup. Incredible specialty coffee culture, vibrant tech hackathons every weekend, and intense builder energy."
     }
   ];
 
-  const cityIds = [];
+  const cityMap = [];
   for (const hub of hubs) {
     const [inserted] = await sql`
       INSERT INTO cities (country, city, area, wifi_speed, monthly_cost, tagline, description)
       VALUES (${hub.country}, ${hub.city}, ${hub.area}, ${hub.wifi_speed}, ${hub.monthly_cost}, ${hub.tagline}, ${hub.description})
       RETURNING id;
     `;
-    cityIds.push({ id: inserted.id, city: hub.city, country: hub.country });
+    cityMap.push({ id: inserted.id, city: hub.city, country: hub.country });
   }
 
-  console.log("Seeding authentic nomad reviews...");
+  console.log("Seeding verified nomad field reviews...");
 
-  // Seed reviews for Tokyo
+  // Chiang Mai reviews
   await sql`
     INSERT INTO reviews (city_id, nomad_callsign, rating, comment, created_at)
     VALUES 
-      (${cityIds[0].id}, 'Scout_Kaito', 5, 'Shibuya fiber speeds clocked 920 Mbps on speedtest. Incredible focus culture in cafes; nobody talks loudly, perfect for marathon coding sessions.', NOW() - INTERVAL '10 days'),
-      (${cityIds[0].id}, 'Elena_Codes', 4, 'Safest city on the planet to walk around at 3 AM with a laptop. Only downside is rent in central wards can get steep.', NOW() - INTERVAL '6 days'),
-      (${cityIds[0].id}, 'Dev_Nomad', 5, 'The coffee roasteries in Daikanyama are unmatched. Reliable sockets everywhere and 7-Eleven runs for midnight brain fuel.', NOW() - INTERVAL '2 days');
+      (${cityMap[0].id}, 'Scout_Alex', 5, 'Nimman is the promised land for remote work. 900 Mbps fiber at Yellow Coworking, $2 iced cold brew, and friendly nomads everywhere.', NOW() - INTERVAL '12 days'),
+      (${cityMap[0].id}, 'Dev_Elena', 5, 'Lived in Santitham for 6 months. Monthly costs under $800 including gym and private condo. Zero friction for building software.', NOW() - INTERVAL '5 days');
   `;
 
-  // Seed reviews for Kyoto
+  // Bangkok reviews
   await sql`
     INSERT INTO reviews (city_id, nomad_callsign, rating, comment, created_at)
     VALUES 
-      (${cityIds[1].id}, 'ZenCoder', 5, 'Rented a machiya near Kamogawa for 2 months. My productivity tripled. The quiet temple surroundings remove all mental friction.', NOW() - INTERVAL '8 days'),
-      (${cityIds[1].id}, 'Marcus_V', 4, 'High speed internet even in older traditional houses. Just note that public transportation is mostly buses rather than subway.', NOW() - INTERVAL '3 days');
+      (${cityMap[1].id}, 'MetroNomad', 4, 'The modern towers in Thong Lo have unmatched 24hr coworking spaces. Great coffee, fast internet, just brace for city traffic.', NOW() - INTERVAL '7 days');
   `;
 
-  // Seed reviews for Chongqing
+  // Koh Phangan reviews
   await sql`
     INSERT INTO reviews (city_id, nomad_callsign, rating, comment, created_at)
     VALUES 
-      (${cityIds[2].id}, 'CyberWanderer', 5, 'The scale of Chongqing is mind-blowing. High-speed 5G everywhere, incredible spicy street food for $3, and modern apartments under $500/mo.', NOW() - INTERVAL '12 days'),
-      (${cityIds[2].id}, 'NeoScout', 4, 'Spectacular scenery and warm locals. Make sure to set up your Alipay/WeChat Pay before arriving.', NOW() - INTERVAL '4 days');
+      (${cityMap[2].id}, 'IslandHacker', 5, 'Working right on Hin Kong beach with Starlink backup. Best lifestyle balance on earth.', NOW() - INTERVAL '4 days');
   `;
 
-  // Seed reviews for Delhi
+  // Bali (Canggu) reviews
   await sql`
     INSERT INTO reviews (city_id, nomad_callsign, rating, comment, created_at)
     VALUES 
-      (${cityIds[4].id}, 'Aryan_Founder', 5, 'Hauz Khas Village has such creative energy. Fantastic artisan coffee shops overlooking 13th-century reservoirs. Costs are a fraction of Europe.', NOW() - INTERVAL '9 days'),
-      (${cityIds[4].id}, 'Wanderlust_Sam', 4, 'Great coworking spaces in South Delhi. Uber is practically instant and dirt cheap.', NOW() - INTERVAL '5 days');
+      (${cityMap[3].id}, 'SurfAndCode', 5, 'Zin Cowork in Canggu is world class. Bamboo architecture, quiet air-conditioned focus booths, and 200 Mbps fiber.', NOW() - INTERVAL '9 days'),
+      (${cityMap[3].id}, 'Nomad_Tara', 4, 'Unreal community and food. Rent a scooter to easily get through shortcut traffic.', NOW() - INTERVAL '3 days');
   `;
 
-  // Seed reviews for Goa
+  // Bali (Ubud) reviews
   await sql`
     INSERT INTO reviews (city_id, nomad_callsign, rating, comment, created_at)
     VALUES 
-      (${cityIds[5].id}, 'GoaHacker', 5, 'Work all morning with ocean views in Arambol, swim at sunset, and attend crypto/AI meetups at night. Starlink and optical fiber made Goa a real nomad paradise.', NOW() - INTERVAL '7 days'),
-      (${cityIds[5].id}, 'Nomad_Priya', 5, 'Unmatched community spirit. You make friends for life within 48 hours of arriving.', NOW() - INTERVAL '1 day');
+      (${cityMap[4].id}, 'ZenBuilder', 5, 'Outpost Ubud in the jungle valley cleared my brain fog completely. Wrote an entire compiler backend in 3 weeks.', NOW() - INTERVAL '8 days');
   `;
 
-  // Seed reviews for Frankfurt
+  // Tokyo reviews
   await sql`
     INSERT INTO reviews (city_id, nomad_callsign, rating, comment, created_at)
     VALUES 
-      (${cityIds[6].id}, 'Lukas_Dev', 4, 'Latency to European cloud servers is single-digit milliseconds. Clean, punctual, and central to everything in Europe.', NOW() - INTERVAL '11 days');
+      (${cityMap[6].id}, 'Scout_Kaito', 5, 'Shibuya fiber speeds clocked 920 Mbps on speedtest. Incredible focus culture in cafes; nobody talks loudly, perfect for marathon coding sessions.', NOW() - INTERVAL '10 days'),
+      (${cityMap[6].id}, 'Dev_Nomad', 5, 'The coffee roasteries in Daikanyama are unmatched. Reliable sockets everywhere and 7-Eleven runs for midnight brain fuel.', NOW() - INTERVAL '2 days');
   `;
 
-  // Seed reviews for Barcelona
+  // Fukuoka reviews
   await sql`
     INSERT INTO reviews (city_id, nomad_callsign, rating, comment, created_at)
     VALUES 
-      (${cityIds[8].id}, 'Mateo_UX', 5, 'Poblenou is the gold standard of nomad neighborhoods. 5 minutes from the beach, converted industrial warehouses with fiber, and endless sunny days.', NOW() - INTERVAL '6 days'),
-      (${cityIds[8].id}, 'Sophie_Remote', 5, 'High quality of life. The nomad meetups every Thursday bring together 100+ international remote workers.', NOW() - INTERVAL '2 days');
+      (${cityMap[8].id}, 'HakataDev', 5, 'Tenjin has the best startup ecosystem in Japan outside Tokyo, and rent is 40% cheaper. Incredible tonkotsu ramen everywhere.', NOW() - INTERVAL '6 days');
   `;
 
-  console.log("Nomad platform database successfully reset and seeded!");
+  // Barcelona reviews
+  await sql`
+    INSERT INTO reviews (city_id, nomad_callsign, rating, comment, created_at)
+    VALUES 
+      (${cityMap[9].id}, 'Mateo_UX', 5, 'Poblenou is the gold standard of nomad neighborhoods. 5 minutes from the beach, converted industrial warehouses with fiber, and endless sunny days.', NOW() - INTERVAL '6 days'),
+      (${cityMap[9].id}, 'Sophie_Remote', 5, 'High quality of life. The nomad meetups every Thursday bring together 100+ international remote workers.', NOW() - INTERVAL '2 days');
+  `;
+
+  // Valencia reviews
+  await sql`
+    INSERT INTO reviews (city_id, nomad_callsign, rating, comment, created_at)
+    VALUES 
+      (${cityMap[10].id}, 'CoastBuilder', 5, 'Valencia is half the price of Barcelona with equally good weather, fantastic Turia park bike rides, and high-speed internet.', NOW() - INTERVAL '5 days');
+  `;
+
+  // Goa reviews
+  await sql`
+    INSERT INTO reviews (city_id, nomad_callsign, rating, comment, created_at)
+    VALUES 
+      (${cityMap[12].id}, 'GoaHacker', 5, 'Work all morning with ocean views in Arambol, swim at sunset, and attend crypto/AI meetups at night. Optical fiber made Goa a real nomad paradise.', NOW() - INTERVAL '7 days'),
+      (${cityMap[12].id}, 'Nomad_Priya', 5, 'Unmatched community spirit. You make friends for life within 48 hours of arriving.', NOW() - INTERVAL '1 day');
+  `;
+
+  // Dharamsala reviews
+  await sql`
+    INSERT INTO reviews (city_id, nomad_callsign, rating, comment, created_at)
+    VALUES 
+      (${cityMap[13].id}, 'HimalayaScout', 5, 'Crisp mountain air, quiet rooftop balconies overlooking pine forests, and $15/night private rooms. The ultimate deep work reset.', NOW() - INTERVAL '6 days');
+  `;
+
+  // Bangalore reviews
+  await sql`
+    INSERT INTO reviews (city_id, nomad_callsign, rating, comment, created_at)
+    VALUES 
+      (${cityMap[14].id}, 'Founder_Arjun', 5, 'Indiranagar is the tech heart of India. Third Wave Coffee and Blue Tokai are packed with founders writing code until midnight.', NOW() - INTERVAL '4 days');
+  `;
+
+  console.log("Database reset complete! Seeded 15 authentic nomad destinations across Thailand, Indonesia, Japan, Spain, and India.");
 }
 
 setup().catch((err) => {
