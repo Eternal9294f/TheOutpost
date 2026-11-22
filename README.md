@@ -18,21 +18,21 @@
 **The Outpost** is a distraction-free, telemetry-driven travel review network engineered specifically for wandering software developers, founders, and digital nomads.
 
 Unlike generic travel blogs or cluttered tourism apps, The Outpost treats global destinations as field stations. It provides high-signal intelligence on actual remote working conditions:
-* **Verified Connectivity:** Real speedtest metrics (e.g., 650 Mbps optical fiber in Chiang Mai vs. 920 Mbps fiber in Tokyo).
+* **Verified Connectivity:** Real speed test metrics (e.g., 650 Mbps optical fiber in Chiang Mai vs. 920 Mbps fiber in Tokyo).
 * **Cost of Existence:** Realistic monthly burn rates for remote builders ($650/mo to $2,200/mo).
 * **Field Dispatches:** Unfiltered reviews from fellow nomads evaluating noise floors, focus cafes, community density, and safety.
 * **Dynamic Intelligence:** Station ratings and metrics computed dynamically on the fly using raw SQL queries directly against our PostgreSQL database.
 
 ---
 
-## 🎯 For Whom and Why I Made It
+## 🎯 For Whom and Why I Made It?
 
 ### Who It's For:
 * **Remote Software Engineers & Tech Founders:** Nomads who need reliable gigabit wifi, acoustic quiet for marathon focus sessions, and dependable sockets.
 * **Global Nomads & Creators:** Builders moving between global nomad hubs across Southeast Asia, East Asia, and Southern Europe.
 * **Aesthetic Minimalists:** Travelers who appreciate calm, low-strain, warm editorial design with zero visual noise.
 
-### Why I Made It (The Buildhour Origin & Personalization):
+### Why I Made It? (The Buildhour Origin & Personalization):
 This project originated from a hands-on software architecture challenge in the **Buildhour** cohort. The original exercise was centered around building a small consumer food prototype called **"Zomato Lite"** (a two-screen app with a restaurant menu and a star review form) designed to teach how software fits together across 5 architectural layers.
 
 While the original exercise was educational, building another generic restaurant clone with food menus did not resonate with my real-world passions or career goals. As a digital nomad inspired by exploration, focus culture, and the gritty scout ethos, I decided to completely personalize and elevate the project:
