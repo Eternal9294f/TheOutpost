@@ -24,207 +24,191 @@ if (!databaseUrl) {
 const sql = neon(databaseUrl);
 
 async function setup() {
-  console.log("Applying schema...");
+  console.log("Applying minimalist nomad travel schema...");
   
   await sql.transaction([
     sql`DROP TABLE IF EXISTS reviews CASCADE`,
-    sql`DROP TABLE IF EXISTS menu_items CASCADE`,
-    sql`DROP TABLE IF EXISTS restaurants CASCADE`,
-    sql`CREATE TABLE restaurants (
+    sql`DROP TABLE IF EXISTS cities CASCADE`,
+    sql`CREATE TABLE cities (
       id SERIAL PRIMARY KEY,
-      name TEXT NOT NULL,
-      cuisine TEXT NOT NULL,
+      country TEXT NOT NULL,
+      city TEXT NOT NULL,
       area TEXT NOT NULL,
-      region TEXT NOT NULL,
+      wifi_speed TEXT NOT NULL,
+      monthly_cost TEXT NOT NULL,
       tagline TEXT NOT NULL,
       description TEXT NOT NULL
     )`,
-    sql`CREATE TABLE menu_items (
-      id SERIAL PRIMARY KEY,
-      restaurant_id INTEGER NOT NULL REFERENCES restaurants(id) ON DELETE CASCADE,
-      name TEXT NOT NULL,
-      description TEXT NOT NULL,
-      price INTEGER NOT NULL,
-      category TEXT NOT NULL,
-      is_signature BOOLEAN DEFAULT false
-    )`,
     sql`CREATE TABLE reviews (
       id SERIAL PRIMARY KEY,
-      restaurant_id INTEGER NOT NULL REFERENCES restaurants(id) ON DELETE CASCADE,
-      menu_item_id INTEGER REFERENCES menu_items(id) ON DELETE SET NULL,
-      nomad_callsign TEXT NOT NULL DEFAULT 'Anonymous Wanderer',
+      city_id INTEGER NOT NULL REFERENCES cities(id) ON DELETE CASCADE,
+      nomad_callsign TEXT NOT NULL DEFAULT 'Anonymous Nomad',
       rating INTEGER NOT NULL CHECK (rating BETWEEN 1 AND 5),
       comment TEXT NOT NULL,
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     )`
   ]);
 
-  console.log("Seeding global outposts...");
+  console.log("Seeding real global nomad hubs...");
 
-  // 1. Tokyo
-  const [tokyo] = await sql`
-    INSERT INTO restaurants (name, cuisine, area, region, tagline, description)
-    VALUES (
-      'The Falcon''s Rest',
-      'Hearth & Nomad Roasts',
-      'Shibuya · District 4',
-      'East Asia',
-      'High-focus acoustic pods, charcoal hearth roasts, and 1Gbps mesh wifi.',
-      'A covert sanctuary for remote engineers and scouts. Quiet tatami working desks by day, roaring hearth by night.'
-    ) RETURNING id;
-  `;
+  const hubs = [
+    // Japan
+    {
+      country: "Japan",
+      city: "Tokyo",
+      area: "Shibuya & Daikanyama",
+      wifi_speed: "850 Mbps",
+      monthly_cost: "$2,200/mo",
+      tagline: "Hyper-efficient infrastructure, pristine safety, and 24/7 focus hubs.",
+      description: "A haven for remote software engineers and designers. Unbeatable optical fiber, whisper-quiet cafes, and seamless train networks across the metropolis."
+    },
+    {
+      country: "Japan",
+      city: "Kyoto",
+      area: "Gion & Kamogawa",
+      wifi_speed: "500 Mbps",
+      monthly_cost: "$1,650/mo",
+      tagline: "Historic machiya workhouses, zen temple gardens, and contemplative deep-work.",
+      description: "For nomads craving stillness. Work alongside the river in 100-year-old wooden teahouses wired with gigabit internet."
+    },
+    // China
+    {
+      country: "China",
+      city: "Chongqing",
+      area: "Yuzhong Peninsula",
+      wifi_speed: "650 Mbps",
+      monthly_cost: "$950/mo",
+      tagline: "Multi-layered cyberpunk architecture, high elevation fog, and 24hr tea houses.",
+      description: "A futuristic vertical 3D city. Ridiculously affordable living costs, blazing fiber, and neon skyline views from cliffside cafes."
+    },
+    {
+      country: "China",
+      city: "Shanghai",
+      area: "Jing'an & Former French Concession",
+      wifi_speed: "750 Mbps",
+      monthly_cost: "$1,850/mo",
+      tagline: "Global tech and venture epicenter flanked by tree-lined boutique avenues.",
+      description: "World-class specialty coffee density, bustling expat founder community, and bullet train connectivity to Hangzhou and Suzhou."
+    },
+    // India
+    {
+      country: "India",
+      city: "Delhi",
+      area: "Hauz Khas & Lodhi",
+      wifi_speed: "350 Mbps",
+      monthly_cost: "$750/mo",
+      tagline: "Centuries-old Mughal tombs integrated with contemporary creator lofts.",
+      description: "India's capital presents unmatched affordability, vibrant creator hubs, and an energetic tech meetup landscape in South Delhi."
+    },
+    {
+      country: "India",
+      city: "Goa",
+      area: "Arambol & Anjuna",
+      wifi_speed: "250 Mbps",
+      monthly_cost: "$850/mo",
+      tagline: "Coastal sunsets, beachside work shacks, and a massive nomadic builder culture.",
+      description: "The primary nomad capital of South Asia. Open-air cowork spaces, morning yoga on the sand, and sunset community hackathons."
+    },
+    // Germany
+    {
+      country: "Germany",
+      city: "Frankfurt",
+      area: "Innenstadt & Sachsenhausen",
+      wifi_speed: "600 Mbps",
+      monthly_cost: "$2,300/mo",
+      tagline: "The continental digital routing exchange (DE-CIX) with rapid pan-European rail.",
+      description: "Extremely low latency internet, international banking and tech headquarters, and serene parks flanking the Main river."
+    },
+    {
+      country: "Germany",
+      city: "Hamburg",
+      area: "Sternschanze & Speicherstadt",
+      wifi_speed: "520 Mbps",
+      monthly_cost: "$1,950/mo",
+      tagline: "Brick warehouse canals, maritime culture, and an independent developer ethos.",
+      description: "Alternative cafes, thriving indie design agencies, and clean public workspaces across one of Europe's greatest port cities."
+    },
+    // Spain
+    {
+      country: "Spain",
+      city: "Barcelona",
+      area: "El Poblenou & Gràcia",
+      wifi_speed: "550 Mbps",
+      monthly_cost: "$1,800/mo",
+      tagline: "300 days of Mediterranean sunlight, beach proximity, and a bustling 22@ tech hub.",
+      description: "One of Europe's top digital nomad capitals. Walkable pedestrian boulevards, vibrant tapas bars, and a thriving international remote worker community."
+    }
+  ];
 
-  // 2. Bali
-  const [bali] = await sql`
-    INSERT INTO restaurants (name, cuisine, area, region, tagline, description)
-    VALUES (
-      'The Wall Oasis',
-      'Tropical Fuel & Brews',
-      'Echo Beach · Canggu',
-      'Southeast Asia',
-      'Open-air bamboo cowork haven, cold water plunge, and high-protein fuel bowls.',
-      'Designed for digital nomads who balance sunrise surf sessions with intense deep-work sprints.'
-    ) RETURNING id;
-  `;
+  const cityIds = [];
+  for (const hub of hubs) {
+    const [inserted] = await sql`
+      INSERT INTO cities (country, city, area, wifi_speed, monthly_cost, tagline, description)
+      VALUES (${hub.country}, ${hub.city}, ${hub.area}, ${hub.wifi_speed}, ${hub.monthly_cost}, ${hub.tagline}, ${hub.description})
+      RETURNING id;
+    `;
+    cityIds.push({ id: inserted.id, city: hub.city, country: hub.country });
+  }
 
-  // 3. Lisbon
-  const [lisbon] = await sql`
-    INSERT INTO restaurants (name, cuisine, area, region, tagline, description)
-    VALUES (
-      'Midland Hearth',
-      'Stone Oven & Micro-Roastery',
-      'Alfama · Old Quarter',
-      'Southern Europe',
-      'Sunlit stone vaults, specialty espresso lab, and Atlantic sea breeze.',
-      'A medieval stone tavern repurposed into a collaborative fortress for founders, designers, and wandering mercenaries.'
-    ) RETURNING id;
-  `;
-
-  // 4. Medellín
-  const [medellin] = await sql`
-    INSERT INTO restaurants (name, cuisine, area, region, tagline, description)
-    VALUES (
-      'The Roaming Falcon',
-      'Andean Roast & Craft Bar',
-      'El Poblado · Sector 10',
-      'Latin America',
-      'Lush canopy terraces, single-origin geisha coffee, and ergonomic standing stations.',
-      'Perched amidst the mountain jungle of Medellín, providing unmatched mountain views and hyper-reliable gigabit connections.'
-    ) RETURNING id;
-  `;
-
-  // 5. Goa
-  const [goa] = await sql`
-    INSERT INTO restaurants (name, cuisine, area, region, tagline, description)
-    VALUES (
-      'Arambol Commons',
-      'Coastal Fire & Catch',
-      'Cliffside · North Goa',
-      'South Asia',
-      'Cliffside sunset work decks, woodfire seafood grills, and nomadic hackathons.',
-      'A bohemian coastal work sanctuary where wanderers, remote builders, and free thinkers gather around open flames.'
-    ) RETURNING id;
-  `;
-
-  console.log("Seeding provisions (menu items)...");
-
-  // Provisions for Tokyo
-  const tokyoItems = await sql`
-    INSERT INTO menu_items (restaurant_id, name, description, price, category, is_signature)
-    VALUES 
-      (${tokyo.id}, 'Smoked Boar Roast', 'Slow-cooked woodfire boar with sticky highland rice, pickled daikon, and charred scallion oil.', 16, 'Bowls & Roasts', true),
-      (${tokyo.id}, 'Cold Drip Nitro Extraction', 'Single-origin Ethiopian bean steeped for 18 hours, served over carved clear ice.', 6, 'Craft Brews', false),
-      (${tokyo.id}, 'Survey Corps Protein Bento', 'Charred wagyu strips, soft-boiled tamago, edamame, and black sesame rice.', 18, 'Bowls & Roasts', false),
-      (${tokyo.id}, 'Smoked Salt Matcha Tonic', 'Ceremonial Uji matcha whisked over chilled sparkling tonic and yuzu zest.', 7, 'Craft Brews', false),
-      (${tokyo.id}, 'Iron Rations Energy Flapjacks', 'Dense oats, crushed pecans, black honey, and whey protein.', 8, 'Field Rations', false)
-    RETURNING id, name;
-  `;
-
-  // Provisions for Bali
-  const baliItems = await sql`
-    INSERT INTO menu_items (restaurant_id, name, description, price, category, is_signature)
-    VALUES 
-      (${bali.id}, 'Dragonfruit Acai Fuel Bowl', 'Organic acai blended with banana, topped with raw cacao nibs, chia seeds, and local mango.', 11, 'Bowls & Roasts', true),
-      (${bali.id}, 'Coconut Cold Brew Elixir', 'Fresh crushed coconut water infused with slow-dripped Kintamani dark roast.', 5, 'Craft Brews', false),
-      (${bali.id}, 'Balinese Spiced Pork Ribs', 'Glazed in ginger kecap manis, lemongrass, and served with coconut lime rice.', 15, 'Bowls & Roasts', false),
-      (${bali.id}, 'Sea Salt Plantain Crisps', 'Crispy plantains seasoned with sea salt and served with crushed chili sambal.', 6, 'Field Rations', false)
-    RETURNING id, name;
-  `;
-
-  // Provisions for Lisbon
-  const lisbonItems = await sql`
-    INSERT INTO menu_items (restaurant_id, name, description, price, category, is_signature)
-    VALUES 
-      (${lisbon.id}, 'Slow-Roasted Iberian Pork', 'Wood-fired tender pork loin with roasted baby potatoes and garlic chimichurri.', 17, 'Bowls & Roasts', true),
-      (${lisbon.id}, 'Guts'' Dark Tavern Ale', 'Bold, malty artisan dark ale brewed in small batches in Sintra.', 6, 'Craft Brews', false),
-      (${lisbon.id}, 'Crispy Bifana Sourdough', 'Thinly sliced marinated pork cutlet inside stone-baked crusty sourdough with spicy mustard.', 9, 'Field Rations', false),
-      (${lisbon.id}, 'Cinnamon Pastel & Double Shot', 'Fresh warm pastel de nata paired with an intense Portuguese bica espresso.', 5, 'Craft Brews', false)
-    RETURNING id, name;
-  `;
-
-  // Provisions for Medellín
-  const medellinItems = await sql`
-    INSERT INTO menu_items (restaurant_id, name, description, price, category, is_signature)
-    VALUES 
-      (${medellin.id}, 'Paisa Nomad Protein Skillet', 'Carne en polvo, red beans, sweet plantains, avocado, and fried organic egg.', 14, 'Bowls & Roasts', true),
-      (${medellin.id}, 'Geisha Micro-Lot Pour Over', 'Floral notes of bergamot and jasmine from the high peaks of Antioquia.', 6, 'Craft Brews', false),
-      (${medellin.id}, 'Choclo Arepa & Braised Beef', 'Sweet sweetcorn cake grilled with melted campesino cheese and shredded brisket.', 8, 'Field Rations', false)
-    RETURNING id, name;
-  `;
-
-  // Provisions for Goa
-  const goaItems = await sql`
-    INSERT INTO menu_items (restaurant_id, name, description, price, category, is_signature)
-    VALUES 
-      (${goa.id}, 'Tandoori Spiced Kingfish Bowl', 'Fresh catch from Morjim grilled over charcoal with red rice and coconut kokum curry.', 13, 'Bowls & Roasts', true),
-      (${goa.id}, 'Cardamom Masala Cold Brew', 'Arabica cold brew spiced with crushed green cardamom and cinnamon quill.', 4, 'Craft Brews', false),
-      (${goa.id}, 'Goan Chorizo Sourdough Roll', 'Spicy Goan pork sausage tossed with caramelized onions inside toasted poi bread.', 8, 'Field Rations', false)
-    RETURNING id, name;
-  `;
-
-  console.log("Seeding field reports...");
+  console.log("Seeding authentic nomad reviews...");
 
   // Seed reviews for Tokyo
   await sql`
-    INSERT INTO reviews (restaurant_id, menu_item_id, nomad_callsign, rating, comment, created_at)
+    INSERT INTO reviews (city_id, nomad_callsign, rating, comment, created_at)
     VALUES 
-      (${tokyo.id}, ${tokyoItems[0].id}, 'Scout_Levi', 5, 'The Smoked Boar Roast is elite fuel. Sprinted through 6 hours of Rust architecture without hitting a slump.', NOW() - INTERVAL '8 days'),
-      (${tokyo.id}, ${tokyoItems[1].id}, 'Falcon_Guts', 4, 'Cold Drip is jet fuel. Only complaint was the standing desks were packed by 2 PM.', NOW() - INTERVAL '6 days'),
-      (${tokyo.id}, ${tokyoItems[2].id}, 'Nomad_Kaelen', 5, 'Best workstation in Tokyo. 800Mbps symmetrical fiber, noise-floor is dead quiet.', NOW() - INTERVAL '3 days'),
-      (${tokyo.id}, ${tokyoItems[0].id}, 'Wanderer_Shin', 4, 'Solid table, great hearth heat. Reliable spot to hunker down.', NOW() - INTERVAL '1 day');
+      (${cityIds[0].id}, 'Scout_Kaito', 5, 'Shibuya fiber speeds clocked 920 Mbps on speedtest. Incredible focus culture in cafes; nobody talks loudly, perfect for marathon coding sessions.', NOW() - INTERVAL '10 days'),
+      (${cityIds[0].id}, 'Elena_Codes', 4, 'Safest city on the planet to walk around at 3 AM with a laptop. Only downside is rent in central wards can get steep.', NOW() - INTERVAL '6 days'),
+      (${cityIds[0].id}, 'Dev_Nomad', 5, 'The coffee roasteries in Daikanyama are unmatched. Reliable sockets everywhere and 7-Eleven runs for midnight brain fuel.', NOW() - INTERVAL '2 days');
   `;
 
-  // Seed reviews for Bali
+  // Seed reviews for Kyoto
   await sql`
-    INSERT INTO reviews (restaurant_id, menu_item_id, nomad_callsign, rating, comment, created_at)
+    INSERT INTO reviews (city_id, nomad_callsign, rating, comment, created_at)
     VALUES 
-      (${bali.id}, ${baliItems[0].id}, 'BeachNomad', 5, 'The dragonfruit fuel bowl is unbelievable. Best morning pre-work ritual in Canggu.', NOW() - INTERVAL '5 days'),
-      (${bali.id}, ${baliItems[1].id}, 'DevSurfer', 4, 'Solid coconut brew. Wifi was rock solid during monsoon rain.', NOW() - INTERVAL '2 days');
+      (${cityIds[1].id}, 'ZenCoder', 5, 'Rented a machiya near Kamogawa for 2 months. My productivity tripled. The quiet temple surroundings remove all mental friction.', NOW() - INTERVAL '8 days'),
+      (${cityIds[1].id}, 'Marcus_V', 4, 'High speed internet even in older traditional houses. Just note that public transportation is mostly buses rather than subway.', NOW() - INTERVAL '3 days');
   `;
 
-  // Seed reviews for Lisbon
+  // Seed reviews for Chongqing
   await sql`
-    INSERT INTO reviews (restaurant_id, menu_item_id, nomad_callsign, rating, comment, created_at)
+    INSERT INTO reviews (city_id, nomad_callsign, rating, comment, created_at)
     VALUES 
-      (${lisbon.id}, ${lisbonItems[0].id}, 'Vanguard_Elena', 5, 'Iberian pork melts in your mouth. Stone vaults keep it cool in summer.', NOW() - INTERVAL '7 days'),
-      (${lisbon.id}, ${lisbonItems[2].id}, 'CodeRanger', 5, 'Crispy bifana sandwich is the best quick desk lunch in Alfama.', NOW() - INTERVAL '4 days');
+      (${cityIds[2].id}, 'CyberWanderer', 5, 'The scale of Chongqing is mind-blowing. High-speed 5G everywhere, incredible spicy street food for $3, and modern apartments under $500/mo.', NOW() - INTERVAL '12 days'),
+      (${cityIds[2].id}, 'NeoScout', 4, 'Spectacular scenery and warm locals. Make sure to set up your Alipay/WeChat Pay before arriving.', NOW() - INTERVAL '4 days');
   `;
 
-  // Seed reviews for Medellín
+  // Seed reviews for Delhi
   await sql`
-    INSERT INTO reviews (restaurant_id, menu_item_id, nomad_callsign, rating, comment, created_at)
+    INSERT INTO reviews (city_id, nomad_callsign, rating, comment, created_at)
     VALUES 
-      (${medellin.id}, ${medellinItems[0].id}, 'AndeanNomad', 5, 'The skillet has enough protein to fuel two gym sessions. Incredible view.', NOW() - INTERVAL '6 days');
+      (${cityIds[4].id}, 'Aryan_Founder', 5, 'Hauz Khas Village has such creative energy. Fantastic artisan coffee shops overlooking 13th-century reservoirs. Costs are a fraction of Europe.', NOW() - INTERVAL '9 days'),
+      (${cityIds[4].id}, 'Wanderlust_Sam', 4, 'Great coworking spaces in South Delhi. Uber is practically instant and dirt cheap.', NOW() - INTERVAL '5 days');
   `;
 
   // Seed reviews for Goa
   await sql`
-    INSERT INTO reviews (restaurant_id, menu_item_id, nomad_callsign, rating, comment, created_at)
+    INSERT INTO reviews (city_id, nomad_callsign, rating, comment, created_at)
     VALUES 
-      (${goa.id}, ${goaItems[0].id}, 'GoaScout', 5, 'Catch of the day grilled right in front of you. Working by the sea is unmatched.', NOW() - INTERVAL '4 days');
+      (${cityIds[5].id}, 'GoaHacker', 5, 'Work all morning with ocean views in Arambol, swim at sunset, and attend crypto/AI meetups at night. Starlink and optical fiber made Goa a real nomad paradise.', NOW() - INTERVAL '7 days'),
+      (${cityIds[5].id}, 'Nomad_Priya', 5, 'Unmatched community spirit. You make friends for life within 48 hours of arriving.', NOW() - INTERVAL '1 day');
   `;
 
-  console.log("Database upgrade complete! Seeded 5 outposts with full provisions and field dispatches.");
+  // Seed reviews for Frankfurt
+  await sql`
+    INSERT INTO reviews (city_id, nomad_callsign, rating, comment, created_at)
+    VALUES 
+      (${cityIds[6].id}, 'Lukas_Dev', 4, 'Latency to European cloud servers is single-digit milliseconds. Clean, punctual, and central to everything in Europe.', NOW() - INTERVAL '11 days');
+  `;
+
+  // Seed reviews for Barcelona
+  await sql`
+    INSERT INTO reviews (city_id, nomad_callsign, rating, comment, created_at)
+    VALUES 
+      (${cityIds[8].id}, 'Mateo_UX', 5, 'Poblenou is the gold standard of nomad neighborhoods. 5 minutes from the beach, converted industrial warehouses with fiber, and endless sunny days.', NOW() - INTERVAL '6 days'),
+      (${cityIds[8].id}, 'Sophie_Remote', 5, 'High quality of life. The nomad meetups every Thursday bring together 100+ international remote workers.', NOW() - INTERVAL '2 days');
+  `;
+
+  console.log("Nomad platform database successfully reset and seeded!");
 }
 
 setup().catch((err) => {

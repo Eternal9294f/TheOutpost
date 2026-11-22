@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "The Outpost — Global Nomad Network",
-  description: "Field reports, provisions, and verified ratings for wandering nomads across global outposts.",
+  title: "THE OUTPOST — Digital Nomad Intelligence Network",
+  description: "A decentralized registry and field intelligence network for digital nomads across global cities.",
 };
 
 export default function RootLayout({
@@ -12,8 +12,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="h-full antialiased dark">
-      <body className="min-h-full flex flex-col bg-[#0A0B0E] text-[#F4F4F6] antialiased">
+    <html lang="en" className="h-full bg-black">
+      <body className="min-h-full flex flex-col bg-black text-[#EDEDED] antialiased selection:bg-zinc-800 selection:text-white">
         {children}
       </body>
     </html>
